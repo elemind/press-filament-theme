@@ -92,10 +92,9 @@ against what is actually behind them, using the WCAG 2.1 formula — not estimat
 
 ```bash
 composer require elemind/press-filament-theme
-php artisan filament:assets
 ```
 
-Register the plugin in your panel provider:
+Register the plugin in each panel provider that should use Press:
 
 ```php
 use Elemind\PressFilamentTheme\PressFilamentTheme;
@@ -108,6 +107,15 @@ public function panel(Panel $panel): Panel
             PressFilamentTheme::make()->variant(PressVariant::Telex)
         );
 }
+```
+
+> [!IMPORTANT]
+> Register the plugin first. Filament collects the stylesheets from the registered
+> plugin, so running the command on a panel without it publishes nothing — and
+> reports no error.
+
+```bash
+php artisan filament:assets
 ```
 
 That is the whole install. **The stylesheet ships compiled**: no Tailwind pass, no Vite entry, no
@@ -165,8 +173,8 @@ itself.
 
 ### Precompiled (default)
 
-The package ships four compiled stylesheets, one per edition. `composer require` plus
-`php artisan filament:assets` is the whole setup.
+The package ships four compiled stylesheets, one per edition. `composer require`, the plugin
+registration above, then `php artisan filament:assets` is the whole setup.
 
 The trade-off is the one every precompiled Filament theme has: the CSS is built without seeing
 your app, so **Tailwind utilities you write in your own Blade files are not generated**. Filament's
@@ -203,11 +211,12 @@ duplicate the files — the paths are longer and move with the package:
 @import '../../../../vendor/elemind/press-filament-theme/resources/css/engine/engine.css';
 ```
 
-Keep the plugin registered either way: it still applies the fonts and the rail script. It detects
-`viteTheme()` on the panel and stops short of setting its own theme, so the two do not fight. Be
-aware that `Panel::getTheme()` gives `viteTheme()` precedence unconditionally — once your panel
-compiles its own CSS, that file is the only one Filament will load, and `applyTheme(true)` cannot
-change that.
+Keep the plugin registered either way: it still applies the fonts and the rail script, so
+`php artisan filament:assets` stays part of the install — it is what publishes that script, and the
+presets the runtime switch fetches. It detects `viteTheme()` on the panel and stops short of setting
+its own theme, so the two do not fight. Be aware that `Panel::getTheme()` gives `viteTheme()`
+precedence unconditionally — once your panel compiles its own CSS, that file is the only one
+Filament will load, and `applyTheme(true)` cannot change that.
 
 ```php
 PressFilamentTheme::make()->telex()->applyTheme(false); // never set the packaged theme
