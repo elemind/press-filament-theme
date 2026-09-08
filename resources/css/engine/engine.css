@@ -1,0 +1,514 @@
+/* ==========================================================================
+   PRESS — ENGINE
+   ==========================================================================
+   Parametric engine shared by every theme in the Press family. It defines
+   the tokens, bridges them onto Filament's own variables, and applies the
+   component chrome that all four themes have in common.
+
+   Load order inside a theme entry file:
+       @import 'engine/engine.css';
+       @import 'engine/rail.css';
+       @import 'presets/<theme>.css';
+
+   THREE LAYERS
+     1. TOKENS   (--press-*)  the knobs a preset turns
+     2. BRIDGE                maps tokens onto Filament's variables
+     3. HOOKS    (.fi-*)      chrome that variables cannot reach
+
+   Verified against Filament v5.7.6.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   LAYER 1 — TOKENS
+   ==========================================================================
+   Defaults reproduce Filament's factory look, so the engine on its own
+   changes nothing. A preset earns the theme its identity by reassigning
+   these and nothing else (plus its own signature rules).
+   ========================================================================== */
+
+:root {
+  /* ----- BRAND RAMP ------------------------------------------------------
+     11 stops, 50 near-white to 950 near-black. Components pick their own
+     stop, so a ramp with a hole surfaces as a wrong-colored state
+     somewhere. Anchor the brand hex at 500 or 600 and generate the rest. */
+  --press-primary-50:  oklch(0.97 0.014 254.604);
+  --press-primary-100: oklch(0.932 0.032 255.585);
+  --press-primary-200: oklch(0.882 0.059 254.128);
+  --press-primary-300: oklch(0.809 0.105 251.813);
+  --press-primary-400: oklch(0.707 0.165 254.624);
+  --press-primary-500: oklch(0.623 0.214 259.815);
+  --press-primary-600: oklch(0.546 0.245 262.881);
+  --press-primary-700: oklch(0.488 0.243 264.376);
+  --press-primary-800: oklch(0.424 0.199 265.638);
+  --press-primary-900: oklch(0.379 0.146 265.522);
+  --press-primary-950: oklch(0.282 0.091 267.935);
+
+  /* ----- NEUTRAL RAMP ----------------------------------------------------
+     The strongest single lever on a theme's character. Filament derives the
+     page canvas, borders, muted text AND every dark-mode surface from it. */
+  --press-neutral-50:  oklch(0.985 0 0);
+  --press-neutral-100: oklch(0.967 0.001 286.375);
+  --press-neutral-200: oklch(0.92 0.004 286.32);
+  --press-neutral-300: oklch(0.871 0.006 286.286);
+  --press-neutral-400: oklch(0.705 0.015 286.067);
+  --press-neutral-500: oklch(0.552 0.016 285.938);
+  --press-neutral-600: oklch(0.442 0.017 285.786);
+  --press-neutral-700: oklch(0.37 0.013 285.805);
+  --press-neutral-800: oklch(0.274 0.006 286.033);
+  --press-neutral-900: oklch(0.21 0.006 285.885);
+  --press-neutral-950: oklch(0.141 0.005 285.823);
+
+  /* ----- TYPOGRAPHY ------------------------------------------------------
+     Font NAMES only. Load the actual faces in the panel provider:
+       ->font('Name') ->monoFont('Name') ->serifFont('Name')
+     Filament v5 prints all three as --font-family, --mono-font-family and
+     --serif-font-family on :root. Nothing in Filament consumes the serif
+     one out of the box: it is ours to spend. */
+  --press-font-sans:  var(--font-family, ui-sans-serif), ui-sans-serif, system-ui;
+  --press-font-mono:  var(--mono-font-family, ui-monospace), ui-monospace, 'SF Mono';
+  --press-font-serif: var(--serif-font-family, ui-serif), ui-serif, Georgia;
+
+  /* Which family carries page headings, section titles and stat values.
+     Presets point this at sans, serif or mono. */
+  --press-font-heading: var(--press-font-sans);
+  --press-heading-weight: 600;
+  --press-heading-tracking: -0.02em;
+  --press-heading-size: 1.5rem;
+
+  /* Table headers and eyebrow labels. The colour is its own token because a
+     muted grey that clears 4.5:1 on paper does NOT clear it on a dark ground:
+     the neutral ramp has to be read from the other end in dark mode. Setting
+     one value for both was the single most common accessibility failure in
+     the family. */
+  --press-label-color: var(--press-neutral-500);
+  --press-label-weight: 500;
+  --press-label-tracking: 0.05em;
+  --press-label-transform: uppercase;
+  --press-label-size: 0.6875rem;
+
+  /* ----- SHAPE -----------------------------------------------------------
+     Three radii drive the whole UI:
+       sm  badges, checkboxes, chips
+       md  buttons, inputs, dropdown items, tabs
+       lg  cards, tables, modals, widgets  */
+  --press-radius-sm: .375rem;
+  --press-radius-md: .5rem;
+  --press-radius-lg: .75rem;
+
+  /* ----- LAYOUT ----------------------------------------------------------
+     Sidebar sizes still matter: a Press theme must stay presentable when
+     the panel is NOT configured for top navigation. */
+  --press-sidebar-width: 20rem;
+  --press-sidebar-collapsed-width: 4.5rem;
+
+  /* Content cap. Filament caps pages at --container-7xl (80rem). With the
+     rail there is no sidebar, so the page can take the full width. */
+  --press-content-max: none;
+
+  /* ----- SURFACES (LIGHT) ------------------------------------------------ */
+  --press-bg-app:     var(--press-neutral-50);
+  --press-bg-surface: oklch(1 0 0);
+  --press-bg-sidebar: var(--press-bg-surface);
+  --press-bg-topbar:  var(--press-bg-surface);
+  --press-bg-overlay: var(--press-bg-surface);
+
+  /* ----- FOCUS -----------------------------------------------------------
+     Its own token, and non-negotiable. A theme that restyles rings has to
+     restore the focus ring explicitly or it removes it: Filament marks focus
+     by changing the ring on .fi-input-wrp, so any static --tw-ring-shadow
+     declared there wins over it and a focused field becomes indistinguishable
+     from a resting one. That is WCAG 2.4.7 failed, silently, by a stylesheet
+     that otherwise looks correct. */
+  --press-focus: var(--press-primary-600);
+  --press-focus-halo: color-mix(in oklab, var(--press-primary-600) 22%, transparent);
+
+  /* ----- BORDERS ---------------------------------------------------------
+     Filament draws borders as box-shadow rings, colored by a transparent
+     mix of neutral-950 (white in dark mode). */
+  --press-border:        color-mix(in oklab, var(--press-neutral-950) 10%, transparent);
+  --press-border-subtle: color-mix(in oklab, var(--press-neutral-950) 5%, transparent);
+
+  /* ----- ELEVATION ------------------------------------------------------- */
+  --press-shadow-surface: 0 1px 3px 0 #0000001a, 0 1px 2px -1px #0000001a;
+  --press-shadow-input:   0 1px 3px 0 #0000001a, 0 1px 2px -1px #0000001a;
+  --press-shadow-overlay: 0 10px 15px -3px #0000001a, 0 4px 6px -4px #0000001a;
+
+  /* ----- BACKDROPS -------------------------------------------------------
+     Two optional layers a preset may paint behind everything:
+       --press-backdrop        the whole panel canvas
+       --press-login-backdrop  the auth pages only, falling back to the above
+     and, for a backdrop built out of a repeating cell rather than out of
+     stretched gradients:
+       --press-backdrop-size / --press-backdrop-repeat
+       --press-login-backdrop-size / --press-login-backdrop-repeat
+     Neither is DECLARED here on purpose. A declared token can never fall
+     back, so declaring them `none` would silently erase a canvas backdrop on
+     the login page — which is exactly the bug this comment replaces.
+
+     The auth page is the first thing anyone sees, and almost every theme in
+     the directory leaves it as an empty field with a card floating in it.
+
+  /* ----- TABLE ROWS ------------------------------------------------------
+     A rule, not a stripe: a 1px hairline keeps dense tables calm. */
+  --press-row-rule: var(--press-border-subtle);
+  --press-row-hover: color-mix(in oklab, var(--press-neutral-100) 60%, transparent);
+}
+
+/* ----- DARK MODE -----------------------------------------------------------
+   Only tokens that CHANGE belong here. Ramps, radii, fonts and layout are
+   mode-independent, so a tinted neutral ramp tints dark mode automatically. */
+.dark {
+  --press-bg-app:     var(--press-neutral-950);
+  --press-bg-surface: var(--press-neutral-900);
+  --press-bg-sidebar: var(--press-bg-surface);
+  --press-bg-topbar:  var(--press-bg-surface);
+  --press-bg-overlay: var(--press-neutral-900);
+
+  --press-border:        color-mix(in oklab, oklch(1 0 0) 10%, transparent);
+  --press-border-subtle: color-mix(in oklab, oklch(1 0 0) 10%, transparent);
+
+  --press-shadow-surface: 0 1px 3px 0 #0000004d;
+  --press-shadow-input: 0 0 #0000;
+  --press-shadow-overlay: 0 10px 15px -3px #00000066, 0 4px 6px -4px #00000066;
+
+  --press-row-hover: color-mix(in oklab, oklch(1 0 0) 4%, transparent);
+
+  --press-label-color: var(--press-neutral-400);
+
+  --press-focus: var(--press-primary-400);
+  --press-focus-halo: color-mix(in oklab, var(--press-primary-400) 26%, transparent);
+}
+
+
+/* ==========================================================================
+   LAYER 2 — BRIDGE
+   ==========================================================================
+   Filament prints its palette as an inline <style> on :root at runtime,
+   after stylesheet load order is settled. `:root:root` (specificity 0,2,0)
+   beats it regardless of order. Do not simplify it to `:root`.
+   ========================================================================== */
+
+:root:root {
+  --primary-50:  var(--press-primary-50);
+  --primary-100: var(--press-primary-100);
+  --primary-200: var(--press-primary-200);
+  --primary-300: var(--press-primary-300);
+  --primary-400: var(--press-primary-400);
+  --primary-500: var(--press-primary-500);
+  --primary-600: var(--press-primary-600);
+  --primary-700: var(--press-primary-700);
+  --primary-800: var(--press-primary-800);
+  --primary-900: var(--press-primary-900);
+  --primary-950: var(--press-primary-950);
+
+  --gray-50:  var(--press-neutral-50);
+  --gray-100: var(--press-neutral-100);
+  --gray-200: var(--press-neutral-200);
+  --gray-300: var(--press-neutral-300);
+  --gray-400: var(--press-neutral-400);
+  --gray-500: var(--press-neutral-500);
+  --gray-600: var(--press-neutral-600);
+  --gray-700: var(--press-neutral-700);
+  --gray-800: var(--press-neutral-800);
+  --gray-900: var(--press-neutral-900);
+  --gray-950: var(--press-neutral-950);
+
+  --radius-md: var(--press-radius-sm);   /* badges, checkboxes         */
+  --radius-lg: var(--press-radius-md);   /* buttons, inputs, tabs      */
+  --radius-xl: var(--press-radius-lg);   /* cards, tables, modals      */
+
+  --sidebar-width:           var(--press-sidebar-width);
+  --collapsed-sidebar-width: var(--press-sidebar-collapsed-width);
+}
+
+
+/* ==========================================================================
+   LAYER 3 — COMPONENT HOOKS
+   ==========================================================================
+   Filament marks every element with stable fi-* hook classes and recommends
+   styling through them rather than publishing Blade views.
+   ========================================================================== */
+
+/* ----- 3.1 FRAME ---------------------------------------------------------- */
+
+.fi-body {
+  background-color: var(--press-bg-app);
+  background-image: var(--press-backdrop, none);
+  background-attachment: fixed;
+  /* A backdrop built out of radial gradients wants one copy stretched over
+     the viewport; one built out of a repeating cell wants a cell size. The
+     token is never declared — see the note above the backdrop tokens — so a
+     theme that has no use for it gets `auto`, which with `no-repeat` sizing
+     behaves as it always did. */
+  background-size: var(--press-backdrop-size, auto);
+  background-repeat: var(--press-backdrop-repeat, no-repeat);
+}
+
+.fi-topbar {
+  background-color: var(--press-bg-topbar);
+  --tw-ring-color: var(--press-border-subtle);
+}
+
+.fi-sidebar {
+  background-color: var(--press-bg-sidebar);
+}
+
+/* ----- 3.2 SURFACES -------------------------------------------------------
+   One selector list restyles every card in the panel. The scoping mirrors
+   Filament's own: sections opt OUT of card chrome with
+   .fi-section-not-contained (widget wrappers), .fi-aside sections put the
+   chrome on their child .fi-section-content-ctn, and .fi-secondary sections
+   keep their tinted background. Never use a blanket .fi-section rule. */
+
+.fi-section:not(.fi-section-not-contained):not(.fi-aside):not(.fi-secondary),
+.fi-section.fi-aside:not(.fi-section-not-contained) > .fi-section-content-ctn,
+.fi-ta-ctn,
+.fi-wi-stats-overview-stat,
+.fi-simple-main {
+  background-color: var(--press-bg-surface);
+  --tw-ring-color: var(--press-border-subtle);
+  --tw-shadow: var(--press-shadow-surface);
+  box-shadow: var(--tw-inset-shadow, 0 0 #0000), var(--tw-inset-ring-shadow, 0 0 #0000),
+    var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow, 0 0 #0000);
+}
+
+.fi-dropdown-panel,
+.fi-modal-window {
+  background-color: var(--press-bg-overlay);
+  --tw-ring-color: var(--press-border-subtle);
+  --tw-shadow: var(--press-shadow-overlay);
+  box-shadow: var(--tw-inset-shadow, 0 0 #0000), var(--tw-inset-ring-shadow, 0 0 #0000),
+    var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow, 0 0 #0000);
+}
+
+/* ----- 3.3 TYPOGRAPHY ----------------------------------------------------- */
+
+.fi-header-heading {
+  font-family: var(--press-font-heading);
+  font-weight: var(--press-heading-weight);
+  letter-spacing: var(--press-heading-tracking);
+  font-size: var(--press-heading-size);
+}
+
+.fi-section-header-heading,
+.fi-modal-heading {
+  font-family: var(--press-font-heading);
+  letter-spacing: var(--press-heading-tracking);
+}
+
+/* Numbers are data: they line up in columns or they are noise. */
+.fi-wi-stats-overview-stat-value {
+  font-family: var(--press-font-heading);
+  font-weight: var(--press-heading-weight);
+  letter-spacing: var(--press-heading-tracking);
+  font-variant-numeric: tabular-nums;
+}
+
+.fi-ta-cell,
+.fi-in-text {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ----- 3.4 LABELS ---------------------------------------------------------
+   A sortable column wraps its label in button.fi-ta-header-cell-sort-btn,
+   which carries its own type styles and would otherwise ignore everything
+   set on the th. Both have to be addressed, or half the header row ends up
+   styled and half does not. */
+
+.fi-ta-header-cell,
+.fi-ta-header-cell-sort-btn,
+.fi-sidebar-group-label {
+  font-size: var(--press-label-size);
+  font-weight: var(--press-label-weight);
+  letter-spacing: var(--press-label-tracking);
+  text-transform: var(--press-label-transform);
+  color: var(--press-label-color);
+}
+
+/* ----- 3.5 TABLES ---------------------------------------------------------
+   Row separation by rule, not by stripe. A 1px hairline keeps a dense
+   table calm; a zebra stripe makes it vibrate after twenty minutes. This
+   is a family-wide rule: every Press theme separates rows this way and
+   only changes the weight and opacity of the line. */
+
+.fi-ta-row + .fi-ta-row {
+  border-top: 1px solid var(--press-row-rule);
+}
+
+.fi-ta-row:hover {
+  background-color: var(--press-row-hover);
+}
+
+/* ----- 3.6 INPUTS --------------------------------------------------------- */
+
+.fi-input-wrp {
+  /* Filament does not put a ring utility on form inputs, so --tw-ring-shadow
+     is undefined there and setting --tw-ring-color alone paints nothing.
+     The ring is declared here instead of hoped for. */
+  --tw-ring-shadow: 0 0 0 1px var(--press-border);
+  --tw-shadow: var(--press-shadow-input);
+  --tw-ring-color: var(--press-border);
+  box-shadow: var(--tw-inset-shadow, 0 0 #0000), var(--tw-inset-ring-shadow, 0 0 #0000),
+    var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow, 0 0 #0000);
+}
+
+/* ----- 3.6b LOGIN AND OTHER SIMPLE PAGES ----------------------------------
+   Filament wraps auth pages in .fi-simple-layout. The card itself already
+   picks up the surface chrome from 3.2; this is the field behind it. */
+
+.fi-body:has(.fi-simple-layout) {
+  background-image: var(--press-login-backdrop, var(--press-backdrop, none));
+  background-size: var(--press-login-backdrop-size, var(--press-backdrop-size, auto));
+  background-repeat: var(--press-login-backdrop-repeat, var(--press-backdrop-repeat, no-repeat));
+}
+
+/* ----- 3.6c THE UTILITY BRIDGE --------------------------------------------
+   Every real Filament panel has custom markup — dashboard cards, bespoke
+   widgets, blade views — written with plain Tailwind utilities rather than
+   with fi-* hooks. A theme that redefines what a border looks like and then
+   ignores `ring-gray-950/5` leaves that markup speaking the factory dialect,
+   and the seam shows immediately: the theme's own cards are one thing and
+   the app's cards are another.
+
+   These are the neutral border utilities that appear over and over in that
+   markup, remapped onto the theme's tokens. Only genuinely neutral ones:
+   remapping a coloured utility would be hijacking a decision the app made
+   on purpose. */
+
+[class~="ring-gray-950/5"],
+[class~="ring-gray-900/5"],
+[class~="border-gray-100"],
+[class~="border-gray-200"] {
+  --tw-ring-color: var(--press-border-subtle);
+  border-color: var(--press-row-rule);
+}
+
+[class~="ring-gray-950/10"],
+[class~="ring-gray-900/10"],
+[class~="border-gray-300"] {
+  --tw-ring-color: var(--press-border);
+  border-color: var(--press-border);
+}
+
+.dark [class~="dark:ring-white/10"],
+.dark [class~="dark:border-white/5"],
+.dark [class~="dark:border-white/10"] {
+  --tw-ring-color: var(--press-border-subtle);
+  border-color: var(--press-row-rule);
+}
+
+/* ----- 3.6d FOCUS ---------------------------------------------------------
+   Two mechanisms, deliberately.
+
+   `outline` for everything interactive: it is drawn outside the box, it is
+   immune to the box-shadow rewriting this engine does everywhere else, and
+   it is the one focus indicator that survives Windows High Contrast Mode.
+   :focus-visible rather than :focus, so a mouse click does not leave rings
+   behind.
+
+   A thicker ring plus a halo for text fields, because there the indicator
+   has to read against the field's own resting border rather than against
+   the page. */
+
+:where(a, button, summary, select, [role='button'], [role='menuitem'], [role='tab'], [tabindex]):focus-visible {
+  outline: 2px solid var(--press-focus);
+  outline-offset: 2px;
+}
+
+.fi-input-wrp:has(:is(.fi-input, input, textarea, select):focus-visible),
+.fi-input-wrp:has(:is(.fi-input, input, textarea, select):focus) {
+  --tw-ring-shadow: 0 0 0 2px var(--press-focus);
+  box-shadow:
+    0 0 0 4px var(--press-focus-halo),
+    0 0 0 2px var(--press-focus);
+}
+
+/* The inner input carries no chrome of its own, so its outline would draw a
+   second, competing rectangle inside the one above. */
+.fi-input-wrp :is(.fi-input, input, textarea, select):focus-visible {
+  outline: none;
+}
+
+/* ----- 3.6e TARGET SIZE (WCAG 2.5.8) --------------------------------------
+   24x24 CSS pixels for anything you have to hit. Filament's sortable column
+   headers are 20px tall, which fails outright; the row checkboxes are 16px
+   and pass only under the spacing exception, so they are left alone rather
+   than inflated across every form in the panel — see the README for the
+   measurement that backs that up. */
+
+.fi-ta-header-cell-sort-btn {
+  min-height: 24px;
+}
+
+/* ----- 3.6f REDUCED MOTION -------------------------------------------------
+   Everything this engine animates, stopped. Scoped to what the theme itself
+   introduces: a theme has no business forcing !important onto motion the
+   application chose deliberately. */
+
+@media (prefers-reduced-motion: reduce) {
+  .fi-topbar-item .fi-topbar-item-btn,
+  .fi-topbar-item .fi-topbar-item-btn::after,
+  .fi-btn,
+  .fi-input-wrp,
+  .fi-ta-row {
+    transition: none;
+  }
+
+  .fi-topbar-nav-groups {
+    scroll-behavior: auto;
+    scroll-snap-type: none;
+  }
+}
+
+/* ----- 3.6g FORCED COLORS --------------------------------------------------
+   Windows High Contrast and friends replace the palette wholesale and drop
+   box-shadows entirely. Since this engine draws every border as a shadow,
+   the panel would lose all of its structure at once: cards, fields, dropdowns
+   and modals become untraced rectangles.
+
+   So the borders come back as real borders, and the two states that this
+   family signals with colour alone — the active rail item and focus — get a
+   non-chromatic mark. `Highlight` and `CanvasText` are system keywords: the
+   user's own colours, not ours. */
+
+@media (forced-colors: active) {
+  .fi-section:not(.fi-section-not-contained):not(.fi-aside):not(.fi-secondary),
+  .fi-section.fi-aside:not(.fi-section-not-contained) > .fi-section-content-ctn,
+  .fi-ta-ctn,
+  .fi-wi-stats-overview-stat,
+  .fi-simple-main,
+  .fi-dropdown-panel,
+  .fi-modal-window,
+  .fi-input-wrp {
+    border: 1px solid CanvasText;
+  }
+
+  .fi-topbar {
+    border-bottom: 1px solid CanvasText;
+  }
+
+  /* An active nav item marked only by a filled background disappears here. */
+  .fi-topbar-item.fi-active .fi-topbar-item-btn {
+    border-bottom: 3px solid Highlight;
+  }
+
+  :focus-visible {
+    outline-color: Highlight;
+  }
+
+  /* The fade is decoration and would hide items outright. */
+  .fi-topbar-nav-groups {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+
+/* ----- 3.7 CONTENT WIDTH --------------------------------------------------
+   Filament caps page content at --container-7xl (80rem) through
+   .fi-main.fi-width-7xl. Simple auth pages keep their factory cap on
+   purpose: a full-width login card would be absurd. */
+
+.fi-main.fi-width-7xl {
+  max-width: var(--press-content-max);
+}

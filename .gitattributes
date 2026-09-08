@@ -1,28 +1,26 @@
 # Path-based git attributes
 # https://www.kernel.org/pub/software/scm/git/docs/gitattributes.html
 
-# Ignore all test and documentation with "export-ignore".
+# Everything that serves the repository rather than the installed package.
 /.github                export-ignore
 /.gitattributes         export-ignore
 /.gitignore             export-ignore
-/.idea                  export-ignore
-/.prettierrc            export-ignore
-/.package-lock.json     export-ignore
 /.editorconfig          export-ignore
-/.php_cs.dist.php       export-ignore
-/.vscode                export-ignore
+/.idea                  export-ignore
+/.npmrc                 export-ignore
+/.phpunit.cache         export-ignore
+/.prettierrc            export-ignore
 /art                    export-ignore
-/docs                   export-ignore
-/images                 export-ignore
+/build                  export-ignore
 /tests                  export-ignore
 /package.json           export-ignore
+/package-lock.json      export-ignore
 /phpstan-baseline.neon  export-ignore
 /phpstan.neon.dist      export-ignore
-/postcss.config.js      export-ignore
 /phpunit.xml.dist       export-ignore
 /pint.json              export-ignore
-/psalm.xml              export-ignore
-/psalm.xml.dist         export-ignore
-/tailwind.config.js     export-ignore
-/testbench.yaml         export-ignore
-/UPGRADING.md           export-ignore
+/rector.php             export-ignore
+
+# resources/ is NOT ignored: resources/dist carries the compiled stylesheets and
+# resources/css carries the engine and the presets, which the "from source" mode
+# publishes into the application.

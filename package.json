@@ -2,12 +2,19 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "tailwindcss --input resources/css/index.css --output resources/dist/press-filament-theme.css --watch",
-        "build": "tailwindcss --input resources/css/index.css --output resources/dist/press-filament-theme.css --minify"
+        "build": "npm run build:broadsheet && npm run build:telex && npm run build:gutter && npm run build:vellum",
+        "build:broadsheet": "tailwindcss --input resources/css/press-broadsheet.css --output resources/dist/press-broadsheet.css --minify",
+        "build:telex": "tailwindcss --input resources/css/press-telex.css --output resources/dist/press-telex.css --minify",
+        "build:gutter": "tailwindcss --input resources/css/press-gutter.css --output resources/dist/press-gutter.css --minify",
+        "build:vellum": "tailwindcss --input resources/css/press-vellum.css --output resources/dist/press-vellum.css --minify",
+        "dev:broadsheet": "tailwindcss --input resources/css/press-broadsheet.css --output resources/dist/press-broadsheet.css --watch",
+        "dev:telex": "tailwindcss --input resources/css/press-telex.css --output resources/dist/press-telex.css --watch",
+        "dev:gutter": "tailwindcss --input resources/css/press-gutter.css --output resources/dist/press-gutter.css --watch",
+        "dev:vellum": "tailwindcss --input resources/css/press-vellum.css --output resources/dist/press-vellum.css --watch"
     },
     "devDependencies": {
-        "@tailwindcss/cli": "^4.1.18",
+        "@tailwindcss/cli": "4.3.3",
         "prettier": "^3.5.3",
-        "tailwindcss": "^4.1.18"
+        "tailwindcss": "4.3.3"
     }
 }

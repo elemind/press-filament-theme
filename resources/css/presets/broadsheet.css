@@ -1,0 +1,350 @@
+/* ==========================================================================
+   PRESS — BROADSHEET
+   ==========================================================================
+   The editorial one. Warm paper, warm ink, one masthead red, and a serif
+   carrying every heading. The rail is a newspaper masthead: small caps in
+   a row under a double rule, no icons, the active section underlined
+   rather than filled.
+
+   Broadsheet is the name of the large newspaper format, and it is also the
+   promise: with the sidebar gone the page gets the full width of the sheet.
+
+   PANEL CONFIG
+       ->topNavigation()
+       ->font('Instrument Sans')
+       ->serifFont('Instrument Serif')
+       ->monoFont('IBM Plex Mono')
+   ========================================================================== */
+
+:root {
+  /* ----- Masthead red, anchored on #b03626 (oklch 0.523 0.155 32) --------
+     The red of a newspaper nameplate: earthy, not alarming. Deliberately
+     far from Filament's factory red, which reads as an error state. */
+  --press-primary-50:  oklch(0.972 0.011 32);
+  --press-primary-100: oklch(0.940 0.026 32);
+  --press-primary-200: oklch(0.884 0.050 32);
+  --press-primary-300: oklch(0.808 0.085 32);
+  --press-primary-400: oklch(0.690 0.128 32);
+  --press-primary-500: oklch(0.594 0.152 32);
+  --press-primary-600: oklch(0.523 0.155 32);
+  --press-primary-700: oklch(0.455 0.138 32);
+  --press-primary-800: oklch(0.390 0.114 32);
+  --press-primary-900: oklch(0.335 0.092 32);
+  --press-primary-950: oklch(0.238 0.062 32);
+
+  /* ----- Warm ink on warm paper -----------------------------------------
+     Hue 80 through the whole ramp: newsprint is never neutral gray, and a
+     warm 950 is what makes body text read as ink rather than as black. */
+  --press-neutral-50:  oklch(0.981 0.006 80);
+  --press-neutral-100: oklch(0.962 0.008 80);
+  --press-neutral-200: oklch(0.922 0.010 80);
+  --press-neutral-300: oklch(0.874 0.011 80);
+  --press-neutral-400: oklch(0.708 0.012 78);
+  --press-neutral-500: oklch(0.552 0.012 76);
+  --press-neutral-600: oklch(0.446 0.011 74);
+  --press-neutral-700: oklch(0.374 0.010 72);
+  --press-neutral-800: oklch(0.278 0.009 70);
+  --press-neutral-900: oklch(0.208 0.008 68);
+  --press-neutral-950: oklch(0.148 0.007 66);
+
+  /* ----- Type ------------------------------------------------------------
+     The serif carries headings and stat values. Instrument Serif is a
+     display face: it wants to be large and light, never bold. */
+  /* Declared here, not just configured in the panel provider: a preset that
+     names its own faces renders correctly even if whoever installs it forgets
+     the ->font() calls, and it lets the forge swap themes without a rebuild. */
+  --press-font-sans:  'Instrument Sans', ui-sans-serif, system-ui;
+  --press-font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
+  --press-font-mono:  'IBM Plex Mono', ui-monospace, monospace;
+  --press-font-heading: var(--press-font-serif);
+  --press-heading-weight: 400;
+  --press-heading-tracking: -0.01em;
+  --press-heading-size: 2.25rem;
+
+  /* Small caps for table headers and eyebrows, the way a paper sets them. */
+  --press-label-size: 0.6875rem;
+  --press-label-weight: 600;
+  --press-label-tracking: 0.09em;
+
+  /* ----- Shape -----------------------------------------------------------
+     Print has no rounded corners. Not zero, though: that is Gutter's
+     territory. Just enough to look set rather than cut. */
+  --press-radius-sm: .125rem;
+  --press-radius-md: .1875rem;
+  --press-radius-lg: .25rem;
+
+  /* ----- Paper -----------------------------------------------------------
+     Cream canvas, a warmer white for the cards printed on it. */
+  --press-bg-app:     oklch(0.968 0.011 82);
+  --press-bg-surface: oklch(0.994 0.004 84);
+  --press-bg-topbar:  oklch(0.994 0.004 84);
+  --press-bg-overlay: oklch(0.994 0.004 84);
+
+  /* Ink hairlines, drawn to be seen. A rule is structure here, not noise. */
+  --press-border:        color-mix(in oklab, var(--press-neutral-950) 16%, transparent);
+  --press-border-subtle: color-mix(in oklab, var(--press-neutral-950) 9%, transparent);
+  --press-row-rule:      color-mix(in oklab, var(--press-neutral-950) 8%, transparent);
+  --press-row-hover:     color-mix(in oklab, var(--press-primary-600) 5%, transparent);
+
+  /* Paper does not float. Structure comes from rules, not from elevation. */
+  --press-shadow-surface: 0 0 #0000;
+  --press-shadow-input: 0 0 #0000;
+  --press-shadow-overlay: 0 12px 28px -10px oklch(0.20 0.02 60 / .28);
+
+  /* ----- The masthead ----------------------------------------------------
+     Small caps in a row, no icons, no pills. The active section is
+     underlined in masthead red, the way a paper marks its section. */
+  --press-rail-bg: var(--press-bg-surface);
+  --press-rail-ring: transparent;
+  --press-rail-pad-block: calc(var(--spacing) * 2.5);
+  --press-rail-gap: calc(var(--spacing) * 0.5);
+  --press-rail-fade: 1rem;
+
+  --press-rail-icon-display: none;
+  --press-rail-item-radius: 0;
+  --press-rail-item-pad-x: calc(var(--spacing) * 3);
+  --press-rail-item-pad-y: calc(var(--spacing) * 2.5);
+  --press-rail-item-size: 0.75rem;
+  --press-rail-item-weight: 600;
+  --press-rail-item-tracking: 0.10em;
+  --press-rail-item-transform: uppercase;
+  --press-rail-item-color: var(--press-neutral-600);
+
+  --press-rail-hover-bg: transparent;
+  --press-rail-hover-color: var(--press-neutral-950);
+
+  /* Underlined, not filled. */
+  --press-rail-active-bg: transparent;
+  --press-rail-active-color: var(--press-neutral-950);
+  --press-rail-active-weight: 700;
+  --press-rail-underline-height: 3px;
+  --press-rail-underline-color: var(--press-primary-600);
+  --press-rail-underline-inset: calc(var(--spacing) * 3);
+
+  --press-rail-chrome-color: var(--press-neutral-500);
+  --press-rail-search-radius: .1875rem;
+  --press-rail-search-ring: color-mix(in oklab, var(--press-neutral-950) 14%, transparent);
+  --press-rail-avatar-ring: color-mix(in oklab, var(--press-neutral-950) 14%, transparent);
+}
+
+/* ----- The evening edition -------------------------------------------------
+   Ink becomes the ground and paper becomes the mark. The red lifts, because
+   a 600 red on near-black loses all its blood. */
+.dark {
+  --press-bg-app:     oklch(0.136 0.007 66);
+  --press-bg-surface: oklch(0.184 0.008 68);
+  --press-bg-topbar:  oklch(0.184 0.008 68);
+  --press-bg-overlay: oklch(0.205 0.008 68);
+
+  --press-border:        color-mix(in oklab, oklch(1 0 0) 15%, transparent);
+  --press-border-subtle: color-mix(in oklab, oklch(1 0 0) 9%, transparent);
+  --press-row-rule:      color-mix(in oklab, oklch(1 0 0) 8%, transparent);
+  --press-row-hover:     color-mix(in oklab, var(--press-primary-400) 8%, transparent);
+
+  --press-shadow-surface: 0 0 #0000;
+  --press-shadow-input: 0 0 #0000;
+  --press-shadow-overlay: 0 12px 28px -10px oklch(0 0 0 / .65);
+
+  --press-rail-item-color: oklch(0.72 0.010 78);
+  --press-rail-hover-color: oklch(0.97 0.005 82);
+  --press-rail-active-color: oklch(0.98 0.004 82);
+  --press-rail-underline-color: var(--press-primary-400);
+  --press-rail-chrome-color: oklch(0.70 0.010 78);
+  --press-rail-search-ring: color-mix(in oklab, oklch(1 0 0) 14%, transparent);
+  --press-rail-avatar-ring: color-mix(in oklab, oklch(1 0 0) 20%, transparent);
+}
+
+
+/* ==========================================================================
+   SIGNATURES
+   ========================================================================== */
+
+/* ----- The double rule ----------------------------------------------------
+   The way a masthead is separated from the page. Both strokes are drawn at
+   full ink and the gap between them is wide enough to be read as a gap:
+   the first attempt used 2px, a 2px gap and a 30% hairline, which at normal
+   viewing distance looked less like a typographic device and more like a
+   rendering artefact. A double rule has to be unmistakably double, or it
+   should be a single rule instead. */
+.fi-body-has-top-navigation .fi-topbar {
+  box-shadow:
+    0 3px 0 0 var(--press-neutral-950),
+    0 6px 0 0 var(--press-bg-app),
+    0 7px 0 0 var(--press-neutral-950);
+}
+
+.dark .fi-body-has-top-navigation .fi-topbar,
+.fi-body-has-top-navigation.dark .fi-topbar {
+  box-shadow:
+    0 3px 0 0 oklch(0.88 0.008 82),
+    0 6px 0 0 var(--press-bg-app),
+    0 7px 0 0 oklch(0.88 0.008 82);
+}
+
+/* ----- Headings set like a piece -----------------------------------------
+   Instrument Serif is a display face. Large, light, tight leading. */
+.fi-header-heading {
+  line-height: 1.1;
+}
+
+/* Page subheadings get the serif too, one size down. */
+.fi-header-subheading {
+  font-family: var(--press-font-serif);
+  font-size: 1.0625rem;
+  color: var(--press-neutral-500);
+}
+
+/* ----- Rules, not boxes ---------------------------------------------------
+   Tables are the heart of an admin panel and the place where a newspaper
+   metaphor either works or collapses. Row separation by hairline, header
+   underscored by a full-weight rule. */
+.fi-ta-header-cell {
+  border-bottom: 2px solid var(--press-neutral-950);
+  color: var(--press-neutral-800);
+}
+
+.dark .fi-ta-header-cell {
+  border-bottom-color: oklch(0.80 0.008 80);
+  color: var(--press-neutral-200);
+}
+
+/* ----- Stat values as a front page -----------------------------------------
+   The number is the headline. Serif, oversized, light. */
+.fi-wi-stats-overview-stat-value {
+  font-size: 2.5rem;
+  line-height: 1.05;
+}
+
+.fi-wi-stats-overview-stat-label {
+  font-size: var(--press-label-size);
+  font-weight: 600;
+  letter-spacing: var(--press-label-tracking);
+  text-transform: uppercase;
+  color: var(--press-label-color);
+}
+
+/* ----- Buttons set in type ------------------------------------------------
+   Flat masthead red, no gradient, no lift. The weight comes from the ink. */
+.fi-btn {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* ----- Section titles in serif -------------------------------------------- */
+.fi-section-header-heading {
+  font-size: 1.125rem;
+  font-weight: 400;
+}
+
+/* ----- Login as a front page ---------------------------------------------- */
+.fi-simple-header-heading {
+  font-family: var(--press-font-serif);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+
+/* ==========================================================================
+   THE STATUS RAMPS — printed inks, not web colours
+   ==========================================================================
+   Filament ships Tailwind's red, amber and green, and a blue for `info`.
+   On cream paper next to a masthead red they are the one thing on the page
+   nobody chose: the blue `New` badge in particular reads as a stray pixel
+   from another website.
+
+   All four signals are re-mixed as spot colours a paper could actually run:
+   the same hues a press would reach for, at roughly two thirds of Tailwind's
+   chroma. The lightness curve is the family's, so the badge contrast ratios
+   move with the ink and not with the paper.
+
+   `danger` is deliberately NOT the masthead red. A wine at hue 10 against a
+   brick at hue 32 keeps a destructive action from looking like the primary
+   one — the single confusion this palette could have caused.
+   ========================================================================== */
+
+:root:root {
+  /* Wine — darker and cooler than the masthead, so Delete never reads as New */
+  --danger-50:  oklch(0.968 0.016 10);
+  --danger-100: oklch(0.928 0.040 10);
+  --danger-200: oklch(0.868 0.078 10);
+  --danger-300: oklch(0.782 0.128 10);
+  --danger-400: oklch(0.672 0.176 10);
+  --danger-500: oklch(0.588 0.196 10);
+  --danger-600: oklch(0.522 0.186 10);
+  --danger-700: oklch(0.452 0.160 10);
+  --danger-800: oklch(0.388 0.132 10);
+  --danger-900: oklch(0.334 0.106 10);
+  --danger-950: oklch(0.238 0.070 10);
+
+  /* Ochre — the yellow of a printed warning notice, never a highlighter */
+  --warning-50:  oklch(0.968 0.018 75);
+  --warning-100: oklch(0.928 0.044 75);
+  --warning-200: oklch(0.868 0.084 75);
+  --warning-300: oklch(0.782 0.116 75);
+  --warning-400: oklch(0.672 0.134 75);
+  --warning-500: oklch(0.588 0.128 75);
+  --warning-600: oklch(0.522 0.112 75);
+  --warning-700: oklch(0.452 0.096 75);
+  --warning-800: oklch(0.388 0.080 75);
+  --warning-900: oklch(0.334 0.066 75);
+  --warning-950: oklch(0.238 0.046 75);
+
+  /* Bottle green — a second ink, held well back from the red */
+  --success-50:  oklch(0.968 0.014 152);
+  --success-100: oklch(0.928 0.034 152);
+  --success-200: oklch(0.868 0.062 152);
+  --success-300: oklch(0.782 0.092 152);
+  --success-400: oklch(0.672 0.108 152);
+  --success-500: oklch(0.588 0.104 152);
+  --success-600: oklch(0.522 0.094 152);
+  --success-700: oklch(0.452 0.082 152);
+  --success-800: oklch(0.388 0.070 152);
+  --success-900: oklch(0.334 0.058 152);
+  --success-950: oklch(0.238 0.040 152);
+
+  /* Ink blue — the blue-black of a fountain pen, not a link */
+  --info-50:  oklch(0.968 0.012 250);
+  --info-100: oklch(0.928 0.028 250);
+  --info-200: oklch(0.868 0.052 250);
+  --info-300: oklch(0.782 0.080 250);
+  --info-400: oklch(0.672 0.098 250);
+  --info-500: oklch(0.588 0.100 250);
+  --info-600: oklch(0.522 0.094 250);
+  --info-700: oklch(0.452 0.082 250);
+  --info-800: oklch(0.388 0.070 250);
+  --info-900: oklch(0.334 0.058 250);
+  --info-950: oklch(0.238 0.040 250);
+}
+
+
+/* ==========================================================================
+   THE SIGN-IN PAGE — a sheet with columns on it
+   ==========================================================================
+   Almost every theme in the directory leaves the auth page as an empty field
+   with a card floating in the middle of it. A broadsheet is set in columns,
+   so the columns are what the page shows: vertical rules at a column measure,
+   drawn faintly enough to be paper and not decoration, over a warm wash that
+   keeps the sheet from reading as flat.
+
+   Only the auth pages: `--press-login-backdrop` falls back to
+   `--press-backdrop` when unset, and the panel itself wants no texture behind
+   a table.
+   ========================================================================== */
+
+:root {
+  --press-login-backdrop:
+    repeating-linear-gradient(to right,
+      color-mix(in oklab, var(--press-neutral-950) 10%, transparent) 0 1px,
+      transparent 1px 14rem),
+    radial-gradient(60rem 40rem at 50% -10%,
+      color-mix(in oklab, var(--press-primary-600) 7%, transparent), transparent 70%);
+}
+
+.dark {
+  --press-login-backdrop:
+    repeating-linear-gradient(to right,
+      color-mix(in oklab, oklch(1 0 0) 10%, transparent) 0 1px,
+      transparent 1px 14rem),
+    radial-gradient(60rem 40rem at 50% -10%,
+      color-mix(in oklab, var(--press-primary-400) 12%, transparent), transparent 70%);
+}

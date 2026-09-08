@@ -1,0 +1,352 @@
+/* ==========================================================================
+   PRESS — TELEX
+   ==========================================================================
+   The one built for the dark. Graphite ground, one electric accent, mono
+   on every number, and a rail that reads as a status bar rather than a
+   menu. For panels that stay open for eight hours.
+
+   Light mode is honoured, not tolerated, but the theme is designed in the
+   dark and should be shipped defaulting to it.
+
+   PANEL CONFIG
+       ->topNavigation()
+       ->font('IBM Plex Sans')
+       ->monoFont('IBM Plex Mono')
+       ->defaultThemeMode(\Filament\Enums\ThemeMode::Dark)
+   ========================================================================== */
+
+:root {
+  /* ----- Signal green, anchored on #00b894-ish (oklch 0.72 0.14 172) -----
+     A terminal phosphor that survives on graphite without glowing at you. */
+  --press-primary-50:  oklch(0.973 0.024 172);
+  --press-primary-100: oklch(0.945 0.048 172);
+  --press-primary-200: oklch(0.900 0.080 172);
+  --press-primary-300: oklch(0.838 0.108 172);
+  --press-primary-400: oklch(0.780 0.128 172);
+  --press-primary-500: oklch(0.720 0.140 172);
+  --press-primary-600: oklch(0.512 0.104 172);   /* solid fills and badge text: 4.5:1 both ways */
+  --press-primary-700: oklch(0.468 0.096 172);
+  --press-primary-800: oklch(0.445 0.088 172);
+  --press-primary-900: oklch(0.372 0.070 172);
+  --press-primary-950: oklch(0.262 0.048 172);
+
+  /* ----- Cold graphite ---------------------------------------------------
+     Hue 250, low chroma: blue-leaning gray. It is what keeps a dark panel
+     from looking brown under a warm monitor profile. */
+  --press-neutral-50:  oklch(0.980 0.002 250);
+  --press-neutral-100: oklch(0.958 0.004 250);
+  --press-neutral-200: oklch(0.916 0.006 250);
+  --press-neutral-300: oklch(0.862 0.008 250);
+  --press-neutral-400: oklch(0.696 0.012 250);
+  --press-neutral-500: oklch(0.545 0.014 250);
+  --press-neutral-600: oklch(0.438 0.016 252);
+  --press-neutral-700: oklch(0.362 0.016 254);
+  --press-neutral-800: oklch(0.268 0.014 256);
+  --press-neutral-900: oklch(0.198 0.012 258);
+  --press-neutral-950: oklch(0.138 0.010 258);
+
+  /* ----- Type ------------------------------------------------------------
+     Mono headings. On an operations panel the heading is a label for a
+     stream of data, not a piece of writing, and mono says so immediately. */
+  --press-font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui;
+  --press-font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --press-font-heading: var(--press-font-mono);
+  --press-heading-weight: 500;
+  --press-heading-tracking: -0.015em;
+  --press-heading-size: 1.5rem;
+
+  --press-label-size: 0.6875rem;
+  --press-label-weight: 500;
+  --press-label-tracking: 0.08em;
+
+  /* ----- Shape -----------------------------------------------------------
+     Tight. Instruments are not rounded. */
+  --press-radius-sm: .1875rem;
+  --press-radius-md: .25rem;
+  --press-radius-lg: .375rem;
+
+  /* ----- Light mode: the daytime shift ----------------------------------- */
+  --press-bg-app:     oklch(0.968 0.004 250);
+  --press-bg-surface: oklch(1 0 0);
+  --press-bg-topbar:  oklch(0.198 0.012 258);   /* the bar stays dark, always */
+  --press-bg-overlay: oklch(1 0 0);
+
+  --press-border:        color-mix(in oklab, var(--press-neutral-950) 13%, transparent);
+  --press-border-subtle: color-mix(in oklab, var(--press-neutral-950) 8%, transparent);
+  --press-row-rule:      color-mix(in oklab, var(--press-neutral-950) 7%, transparent);
+  --press-row-hover:     color-mix(in oklab, var(--press-primary-500) 8%, transparent);
+
+  --press-shadow-surface: 0 1px 2px 0 oklch(0.20 0.01 258 / .08);
+  --press-shadow-input: 0 0 #0000;
+  --press-shadow-overlay: 0 16px 32px -12px oklch(0.15 0.01 258 / .35);
+
+  /* ----- The status bar --------------------------------------------------
+     Always dark, in both modes: it is the instrument frame around the data.
+     Items are small mono, the active one marked by a phosphor underline. */
+  --press-rail-bg: var(--press-bg-topbar);
+  --press-rail-ring: transparent;
+  --press-rail-shadow: 0 1px 0 0 color-mix(in oklab, oklch(1 0 0) 10%, transparent);
+  --press-rail-pad-block: calc(var(--spacing) * 2);
+  --press-rail-gap: 0;
+  --press-rail-fade: 1.5rem;
+  --press-rail-logo-filter: brightness(0) invert(1) opacity(.9);
+  /* The bar is dark in BOTH modes, so the wordmark is light in both. Declared
+     only here on purpose: a preset's :root beats the engine's .dark, which for
+     once is the behaviour we want. */
+  --press-rail-logo-color: oklch(0.94 0.006 250);
+
+  --press-rail-icon-display: none;
+  --press-rail-item-radius: 0;
+  --press-rail-item-font: var(--press-font-mono);
+  --press-rail-item-pad-x: calc(var(--spacing) * 3.5);
+  --press-rail-item-pad-y: calc(var(--spacing) * 2);
+  --press-rail-item-size: 0.75rem;
+  --press-rail-item-weight: 450;
+  --press-rail-item-tracking: 0.02em;
+  --press-rail-item-color: oklch(0.66 0.012 252);
+
+  --press-rail-hover-bg: color-mix(in oklab, oklch(1 0 0) 6%, transparent);
+  --press-rail-hover-color: oklch(0.92 0.006 250);
+
+  --press-rail-active-bg: color-mix(in oklab, var(--press-primary-500) 12%, transparent);
+  --press-rail-active-color: var(--press-primary-400);
+  --press-rail-active-weight: 500;
+  --press-rail-underline-height: 2px;
+  --press-rail-underline-color: var(--press-primary-500);
+  --press-rail-underline-inset: 0;
+
+  --press-rail-chrome-color: oklch(0.68 0.012 252);
+  --press-rail-search-bg: color-mix(in oklab, oklch(1 0 0) 6%, transparent);
+  --press-rail-search-ring: color-mix(in oklab, oklch(1 0 0) 12%, transparent);
+  --press-rail-search-radius: .25rem;
+  --press-rail-avatar-ring: color-mix(in oklab, oklch(1 0 0) 22%, transparent);
+}
+
+/* ----- The night shift, which is the point ---------------------------------
+   Two steps of graphite, not one: the canvas sits below the surfaces so
+   cards read as lit panels rather than as holes. */
+.dark {
+  --press-bg-app:     oklch(0.128 0.010 258);
+  --press-bg-surface: oklch(0.178 0.012 258);
+  --press-bg-topbar:  oklch(0.155 0.011 258);
+  --press-bg-overlay: oklch(0.202 0.012 258);
+
+  --press-border:        color-mix(in oklab, oklch(1 0 0) 11%, transparent);
+  --press-border-subtle: color-mix(in oklab, oklch(1 0 0) 7%, transparent);
+  --press-row-rule:      color-mix(in oklab, oklch(1 0 0) 7%, transparent);
+  --press-row-hover:     color-mix(in oklab, var(--press-primary-400) 9%, transparent);
+
+  --press-shadow-surface: 0 0 #0000;
+  --press-shadow-input: 0 0 #0000;
+  --press-shadow-overlay: 0 16px 32px -12px oklch(0 0 0 / .7);
+
+  --press-rail-bg: var(--press-bg-topbar);
+}
+
+
+/* ==========================================================================
+   SIGNATURES
+   ========================================================================== */
+
+/* ----- Everything numeric is mono -----------------------------------------
+   The reason mono exists on an operations panel: digits keep their column
+   between refreshes, so a changing number does not make the row twitch. */
+.fi-ta-cell,
+.fi-ta-header-cell,
+.fi-ta-header-cell-sort-btn,
+.fi-wi-stats-overview-stat-value,
+.fi-wi-stats-overview-stat-description,
+.fi-badge {
+  font-family: var(--press-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.fi-badge {
+  font-size: 0.6875rem;
+  letter-spacing: 0.01em;
+}
+
+/* ----- Where the mono goes, and why ----------------------------------------
+   Two different reasons, deliberately, so the rule holds up when someone
+   asks about it later.
+
+   In a TABLE the mono is functional and applies to the whole grid, names
+   included: digits keep their column between refreshes, so a changing value
+   does not make the row twitch.
+
+   In a FORM there is no column to hold, so the split is by what the field
+   contains. Free text fields in an admin panel carry machine strings —
+   identifiers, codes, addresses, amounts — and take the mono. Selects carry
+   labels a human wrote and stay sans; they do not use .fi-input, so this
+   costs nothing to enforce. Field labels stay sans too: sans is the
+   interface talking, mono is the machine talking. The rich text editor is
+   prose rather than data and also has no .fi-input, so it stays sans on its
+   own. */
+.fi-input {
+  font-family: var(--press-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ----- Rules, never stripes ------------------------------------------------
+   A 1px rule at low opacity keeps a dense table calm; a zebra stripe makes
+   it vibrate after twenty minutes. */
+.fi-ta-header-cell {
+  border-bottom: 1px solid var(--press-border);
+  color: var(--press-label-color);
+}
+
+/* ----- The accent is a signal, not decoration ------------------------------
+   Reserved for the active row marker and the primary action. Everything
+   else stays graphite, so when green appears it means something. */
+.fi-ta-row:hover {
+  box-shadow: inset 2px 0 0 0 var(--press-primary-500);
+}
+
+/* ----- Stat values read as a gauge ----------------------------------------- */
+.fi-wi-stats-overview-stat-value {
+  font-size: 1.875rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.fi-wi-stats-overview-stat-label {
+  font-family: var(--press-font-mono);
+  font-size: var(--press-label-size);
+  letter-spacing: var(--press-label-tracking);
+  text-transform: uppercase;
+  color: var(--press-label-color);
+}
+
+/* ----- Section headings as stream labels ---------------------------------- */
+.fi-section-header-heading {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* ----- An alarm red, not a web red -----------------------------------------
+   Filament's factory danger ramp is Tailwind red at full chroma, which next
+   to the phosphor accent reads as a website rather than as an instrument.
+   Same hue, roughly a fifth less chroma: still unmistakably an alarm, no
+   longer the loudest thing on a graphite panel. */
+:root:root {
+  --danger-50:  oklch(0.971 0.014 25);
+  --danger-100: oklch(0.936 0.034 25);
+  --danger-200: oklch(0.885 0.064 25);
+  --danger-300: oklch(0.810 0.106 25);
+  --danger-400: oklch(0.704 0.158 25);
+  --danger-500: oklch(0.638 0.186 25);
+  --danger-600: oklch(0.572 0.195 25);
+  --danger-700: oklch(0.505 0.176 25);
+  --danger-800: oklch(0.436 0.146 25);
+  --danger-900: oklch(0.382 0.118 25);
+  --danger-950: oklch(0.272 0.078 25);
+}
+
+/* ----- Focus is loud, because keyboards matter here ------------------------
+   The engine already draws a focus ring for the whole family; Telex only
+   widens the halo, since this is the theme people drive from the keyboard. */
+:root {
+  /* The bright phosphor is a dark-mode colour: on white it measures 2.33:1
+     against the surface and fails 1.4.11, so light mode takes the solid 600
+     and only the halo stays loud. */
+  --press-focus: var(--press-primary-600);
+  --press-focus-halo: color-mix(in oklab, var(--press-primary-500) 30%, transparent);
+}
+
+.dark {
+  --press-focus: var(--press-primary-400);
+  --press-focus-halo: color-mix(in oklab, var(--press-primary-400) 32%, transparent);
+}
+
+
+/* ==========================================================================
+   THE REMAINING SIGNALS
+   ==========================================================================
+   The danger ramp above was mixed down when this preset was written; the
+   other three were left at Tailwind's, which on a graphite panel is exactly
+   the seam the danger ramp was fixed to close.
+
+   `success` is the phosphor itself, and that is the point: on an instrument
+   the accent colour IS the good state. A separate green would mean two
+   greens on the same screen, both meaning roughly the same thing.
+
+   `info` goes cold — a signal blue as far from the phosphor as the palette
+   allows, so a `New` badge is never mistaken for a healthy one.
+   ========================================================================== */
+
+:root:root {
+  /* Phosphor, on the danger ramp's lightness curve */
+  --success-50:  oklch(0.971 0.014 172);
+  --success-100: oklch(0.936 0.030 172);
+  --success-200: oklch(0.885 0.052 172);
+  --success-300: oklch(0.810 0.078 172);
+  --success-400: oklch(0.704 0.098 172);
+  --success-500: oklch(0.638 0.104 172);
+  --success-600: oklch(0.572 0.104 172);
+  --success-700: oklch(0.505 0.094 172);
+  --success-800: oklch(0.436 0.080 172);
+  --success-900: oklch(0.382 0.066 172);
+  --success-950: oklch(0.272 0.046 172);
+
+  /* Amber, mixed down the same fifth the alarm was */
+  --warning-50:  oklch(0.971 0.018 78);
+  --warning-100: oklch(0.936 0.042 78);
+  --warning-200: oklch(0.885 0.080 78);
+  --warning-300: oklch(0.810 0.118 78);
+  --warning-400: oklch(0.704 0.140 78);
+  --warning-500: oklch(0.638 0.136 78);
+  --warning-600: oklch(0.572 0.122 78);
+  --warning-700: oklch(0.505 0.104 78);
+  --warning-800: oklch(0.436 0.088 78);
+  --warning-900: oklch(0.382 0.072 78);
+  --warning-950: oklch(0.272 0.050 78);
+
+  /* Signal blue — cold, and nowhere near 172 */
+  --info-50: oklch(0.971 0.014 234);
+  --info-100: oklch(0.936 0.032 234);
+  --info-200: oklch(0.885 0.060 234);
+  --info-300: oklch(0.810 0.096 234);
+  --info-400: oklch(0.700 0.126 234);
+  --info-500: oklch(0.600 0.136 234);
+  --info-600: oklch(0.505 0.132 234);
+  --info-700: oklch(0.440 0.116 234);
+  --info-800: oklch(0.382 0.098 234);
+  --info-900: oklch(0.334 0.080 234);
+  --info-950: oklch(0.240 0.054 234);
+}
+
+
+/* ==========================================================================
+   THE SIGN-IN PAGE — a screen waiting for a line
+   ==========================================================================
+   The auth page is where a dark-first theme has the least to lose and the
+   most to prove: an empty near-black field with a card in it looks broken
+   rather than austere.
+
+   A character cell matrix — one faint dot every 1.5rem — plus a phosphor
+   wash rising from the bottom edge, the way a terminal glows before anything
+   is printed on it. Both are dimmer in light mode, where the metaphor is a
+   printout rather than a screen.
+   ========================================================================== */
+
+:root {
+  --press-login-backdrop:
+    radial-gradient(circle at 50% 50%,
+      color-mix(in oklab, var(--press-neutral-950) 14%, transparent) 0 1px,
+      transparent 1.2px),
+    radial-gradient(70rem 34rem at 50% 118%,
+      color-mix(in oklab, var(--press-primary-600) 10%, transparent), transparent 68%);
+  /* the cell tiles, the glow does not */
+  --press-login-backdrop-size: 1.5rem 1.5rem, auto;
+  --press-login-backdrop-repeat: repeat, no-repeat;
+}
+
+.dark {
+  --press-login-backdrop:
+    radial-gradient(circle at 50% 50%,
+      color-mix(in oklab, oklch(1 0 0) 12%, transparent) 0 1px,
+      transparent 1.2px),
+    radial-gradient(70rem 34rem at 50% 118%,
+      color-mix(in oklab, var(--press-primary-400) 16%, transparent), transparent 68%);
+}
