@@ -1,18 +1,24 @@
 {
     "name": "elemind/press-filament-theme",
-    "description": "This is my package press-filament-theme",
+    "description": "Press is an editorial theme for Filament v5 in four editions, built on a horizontal rail instead of a sidebar.",
     "keywords": [
         "elemind",
         "laravel",
         "filamentphp",
         "filament",
         "filament-plugin",
-        "press-filament-theme"
+        "filament-theme",
+        "theme",
+        "admin-panel",
+        "top-navigation",
+        "editorial",
+        "press"
     ],
     "homepage": "https://github.com/elemind/press-filament-theme",
     "support": {
         "issues": "https://github.com/elemind/press-filament-theme/issues",
-        "source": "https://github.com/elemind/press-filament-theme"
+        "source": "https://github.com/elemind/press-filament-theme",
+        "docs": "https://github.com/elemind/press-filament-theme#readme"
     },
     "license": "MIT",
     "authors": [
@@ -25,6 +31,7 @@
     "require": {
         "php": "^8.2",
         "filament/filament": "^5.0",
+        "illuminate/contracts": "^11.28|^12.0|^13.0",
         "spatie/laravel-package-tools": "^1.15.0"
     },
     "require-dev": {

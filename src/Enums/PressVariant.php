@@ -14,6 +14,8 @@ enum PressVariant: string
 
     /**
      * The id the compiled theme is registered under in FilamentAsset.
+     *
+     * @internal
      */
     public function getThemeId(): string
     {
@@ -22,12 +24,17 @@ enum PressVariant: string
 
     /**
      * The id the preset alone is registered under, without the engine around it.
+     *
+     * @internal
      */
     public function getPresetId(): string
     {
         return 'press-preset-' . $this->value;
     }
 
+    /**
+     * @internal
+     */
     public function getLabel(): string
     {
         return match ($this) {
@@ -38,6 +45,9 @@ enum PressVariant: string
         };
     }
 
+    /**
+     * @internal
+     */
     public function getDescription(): string
     {
         return match ($this) {
@@ -48,6 +58,9 @@ enum PressVariant: string
         };
     }
 
+    /**
+     * @internal
+     */
     public function getSansFont(): string
     {
         return match ($this) {
@@ -60,6 +73,8 @@ enum PressVariant: string
 
     /**
      * Only Broadsheet uses a serif face; the others fall back to the browser default.
+     *
+     * @internal
      */
     public function getSerifFont(): ?string
     {
@@ -69,6 +84,9 @@ enum PressVariant: string
         };
     }
 
+    /**
+     * @internal
+     */
     public function getMonoFont(): string
     {
         return 'IBM Plex Mono';
@@ -77,6 +95,8 @@ enum PressVariant: string
     /**
      * Bunny serves Instrument Serif at weight 400 only, while Filament's provider
      * asks for 400,500,600,700 by default and would get nothing back.
+     *
+     * @internal
      */
     public function getSerifFontUrl(): ?string
     {

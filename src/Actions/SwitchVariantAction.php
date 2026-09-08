@@ -9,6 +9,12 @@ use Filament\Forms\Components\Radio;
 use Filament\Support\Icons\Heroicon;
 use Livewire\Component;
 
+/**
+ * Reach for it through PressFilamentTheme::variantAction(); this class is the
+ * implementation behind it and may change without a major release.
+ *
+ * @internal
+ */
 class SwitchVariantAction
 {
     public static function make(PressFilamentTheme $plugin, string $name = 'pressVariant'): Action

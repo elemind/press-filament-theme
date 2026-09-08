@@ -21,6 +21,9 @@ class PressFilamentTheme implements Plugin
 {
     use ResolvesVariant;
 
+    /**
+     * @internal
+     */
     public const PACKAGE = 'elemind/press-filament-theme';
 
     protected PressVariant $variant = PressVariant::Broadsheet;
@@ -43,6 +46,9 @@ class PressFilamentTheme implements Plugin
         return app(static::class);
     }
 
+    /**
+     * @internal
+     */
     public static function get(): static
     {
         /** @var static $plugin */
@@ -59,6 +65,9 @@ class PressFilamentTheme implements Plugin
         return SwitchVariantAction::make(static::get(), $name);
     }
 
+    /**
+     * @internal
+     */
     public function getId(): string
     {
         return 'press-filament-theme';
@@ -127,6 +136,9 @@ class PressFilamentTheme implements Plugin
         return $this;
     }
 
+    /**
+     * @internal
+     */
     public function isSwitcherVisible(): bool
     {
         return (bool) (is_callable($this->switcherVisible)
@@ -134,11 +146,17 @@ class PressFilamentTheme implements Plugin
             : $this->switcherVisible);
     }
 
+    /**
+     * @internal
+     */
     public function getVariant(): PressVariant
     {
         return $this->variant;
     }
 
+    /**
+     * @internal
+     */
     public function hasRail(): bool
     {
         return $this->rail;

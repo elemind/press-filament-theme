@@ -8,8 +8,14 @@ use Illuminate\Support\Facades\Cookie;
 
 trait ResolvesVariant
 {
+    /**
+     * @internal
+     */
     public const COOKIE = 'press_variant';
 
+    /**
+     * @internal
+     */
     public const COOKIE_MINUTES = 60 * 24 * 365;
 
     protected bool $runtimeSwitch = false;
@@ -62,6 +68,9 @@ trait ResolvesVariant
         return $this;
     }
 
+    /**
+     * @internal
+     */
     public function hasRuntimeSwitch(): bool
     {
         return $this->runtimeSwitch;
@@ -69,6 +78,8 @@ trait ResolvesVariant
 
     /**
      * @return array<int, PressVariant>
+     *
+     * @internal
      */
     public function getAvailableVariants(): array
     {
@@ -78,6 +89,8 @@ trait ResolvesVariant
     /**
      * The edition someone gets before they have chosen one. A default outside the
      * offered list would be unreachable from the switcher, so the list wins.
+     *
+     * @internal
      */
     public function getDefaultVariant(): PressVariant
     {
@@ -92,6 +105,8 @@ trait ResolvesVariant
 
     /**
      * Resolved at render time, where the request and the authenticated user exist.
+     *
+     * @internal
      */
     public function resolveVariant(): PressVariant
     {
@@ -116,6 +131,9 @@ trait ResolvesVariant
         return $variant;
     }
 
+    /**
+     * @internal
+     */
     public function persistVariant(PressVariant $variant): void
     {
         if ($this->variantPersister) {

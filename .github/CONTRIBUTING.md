@@ -40,7 +40,13 @@ Before submitting a pull request:
 
 If the project maintainer has any additional requirements, you will find them listed here.
 
-- **[PSR-2 Coding Standard](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md)** - The easiest way to apply the conventions is to install [PHP Code Sniffer](https://pear.php.net/package/PHP_CodeSniffer).
+- **Code style** - Run `composer lint` ([Pint](https://laravel.com/docs/pint), Laravel preset) before
+  sending a pull request. `composer analyse` runs PHPStan, `composer refactor` runs Rector.
+
+- **Rebuild the stylesheets** - Touching anything under `resources/css/` means the four compiled
+  editions are stale. Run `npm run build` and commit the result: `resources/dist/` is tracked on
+  purpose, so that `composer require` alone is enough to install the theme. The Tailwind version is
+  pinned exactly for this reason — do not loosen it without rebuilding.
 
 - **Add tests!** - Your patch won't be accepted if it doesn't have tests.
 
