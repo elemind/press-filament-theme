@@ -2,7 +2,7 @@
 
 All notable changes to `press-filament-theme` will be documented in this file.
 
-## Unreleased
+## [1.0.0] - 2026-09-08
 
 ### Added
 

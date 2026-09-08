@@ -2,17 +2,22 @@
 # https://www.kernel.org/pub/software/scm/git/docs/gitattributes.html
 
 # Everything that serves the repository rather than the installed package.
+/.claude                export-ignore
+/.cursorrules           export-ignore
+/.editorconfig          export-ignore
 /.github                export-ignore
 /.gitattributes         export-ignore
 /.gitignore             export-ignore
-/.editorconfig          export-ignore
 /.idea                  export-ignore
 /.npmrc                 export-ignore
 /.phpunit.cache         export-ignore
 /.prettierrc            export-ignore
+/AGENTS.md              export-ignore
 /art                    export-ignore
 /build                  export-ignore
-/tests                  export-ignore
+/CHANGELOG.md           export-ignore
+/CLAUDE.md              export-ignore
+/composer.lock          export-ignore
 /package.json           export-ignore
 /package-lock.json      export-ignore
 /phpstan-baseline.neon  export-ignore
@@ -20,6 +25,7 @@
 /phpunit.xml.dist       export-ignore
 /pint.json              export-ignore
 /rector.php             export-ignore
+/tests                  export-ignore
 
 # resources/ is NOT ignored: resources/dist carries the compiled stylesheets and
 # resources/css carries the engine and the presets, which the "from source" mode
