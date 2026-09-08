@@ -1,0 +1,311 @@
+/* ==========================================================================
+   PRESS — THE RAIL
+   ==========================================================================
+   The family signature: navigation as a single horizontal row in the top
+   bar instead of a vertical sidebar, giving the page back the ~18rem the
+   sidebar was taking.
+
+   REQUIRES panel-side config:
+       ->topNavigation()
+
+   Everything here is scoped to .fi-body-has-top-navigation, the class
+   Filament itself puts on <body> when that option is on (verified in
+   components/layout/index.blade.php). So a Press theme installed WITHOUT
+   top navigation degrades to a well-dressed ordinary sidebar panel instead
+   of breaking.
+
+   Verified markup (Filament v5.7.6):
+       ul.fi-topbar-nav-groups
+         li.fi-topbar-item(.fi-active)
+           a.fi-topbar-item-btn
+             .fi-icon
+             .fi-topbar-item-label
+   Navigation groups render as .fi-dropdown triggers between plain items.
+
+   Every preset declines the rail through the tokens below: a newspaper
+   masthead, a status bar, a Swiss block, a soft pill row.
+   ========================================================================== */
+
+:root {
+  /* Bar itself. Defaults inherit the topbar, so the rail is invisible until
+     a preset takes a position. */
+  --press-rail-bg: var(--press-bg-topbar);
+  --press-rail-ring: var(--press-border-subtle);
+  --press-rail-shadow: 0 0 #0000;
+  --press-rail-gap: calc(var(--spacing) * 1);
+  --press-rail-pad-block: calc(var(--spacing) * 2);
+  --press-rail-fade: 1.25rem;
+
+  /* Items at rest. */
+  --press-rail-item-color: var(--press-neutral-600);
+  --press-rail-item-icon-color: var(--press-neutral-400);
+  --press-rail-item-radius: 9999px;
+  --press-rail-item-pad-x: calc(var(--spacing) * 4);
+  --press-rail-item-pad-y: calc(var(--spacing) * 2);
+  --press-rail-item-font: var(--press-font-sans);
+  --press-rail-item-size: inherit;
+  --press-rail-item-weight: 500;
+  --press-rail-item-tracking: normal;
+  --press-rail-item-transform: none;
+  --press-rail-icon-display: inline-flex;
+
+  /* Hover. */
+  --press-rail-hover-bg: color-mix(in oklab, var(--press-neutral-950) 5%, transparent);
+  --press-rail-hover-color: var(--press-neutral-900);
+
+  /* Active. Two mechanisms are available at once; a preset uses one and
+     neutralises the other (transparent background, or zero-height rule). */
+  --press-rail-active-bg: var(--press-primary-600);
+  --press-rail-active-color: oklch(1 0 0);
+  --press-rail-active-icon-color: var(--press-rail-active-color);
+  --press-rail-active-weight: var(--press-rail-item-weight);
+  --press-rail-active-shadow: none;
+  --press-rail-underline-height: 0;
+  --press-rail-underline-color: var(--press-primary-600);
+  --press-rail-underline-offset: 0;
+  --press-rail-underline-inset: 0;
+
+  /* Chrome on the right of the bar: search, bell, avatar. Presets with a
+     dark bar override these to stay readable. */
+  --press-rail-chrome-color: var(--press-neutral-500);
+  --press-rail-search-bg: transparent;
+  --press-rail-search-ring: var(--press-border);
+  --press-rail-search-radius: var(--press-radius-md);
+  --press-rail-avatar-ring: var(--press-border);
+
+  /* The logo slot holds an image OR a brand name. Filament renders
+     `->brandName()` as plain text in the same element, and text does not care
+     about a filter: it takes `color`, which it inherits from the page rather
+     than from the bar. Two separate levers, because they are two materials. */
+  --press-rail-logo-filter: none;
+  --press-rail-logo-color: var(--press-neutral-950);
+}
+
+.dark {
+  --press-rail-hover-bg: color-mix(in oklab, oklch(1 0 0) 8%, transparent);
+  --press-rail-hover-color: oklch(0.97 0 0);
+  --press-rail-item-color: var(--press-neutral-400);
+  --press-rail-chrome-color: var(--press-neutral-400);
+  --press-rail-logo-color: oklch(0.97 0 0);
+}
+
+
+/* ==========================================================================
+   THE BAR
+   ========================================================================== */
+
+.fi-body-has-top-navigation .fi-topbar {
+  background-color: var(--press-rail-bg);
+  --tw-ring-color: var(--press-rail-ring);
+  --tw-shadow: var(--press-rail-shadow);
+  box-shadow: var(--tw-inset-shadow, 0 0 #0000), var(--tw-inset-ring-shadow, 0 0 #0000),
+    var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow, 0 0 #0000);
+}
+
+/* A brand set as TEXT inherits the page's ink, not the bar's. On a theme whose
+   bar is darker than the page — Telex, in light mode — that lands near-black on
+   near-black and the brand disappears at about 1.1:1. It measured fine in dark
+   mode, which is exactly why it went unnoticed.
+
+   So the filter is scoped to a real image and the text gets a colour of its
+   own. Applying the filter to text would work by accident on a theme whose
+   filter happens to be `brightness(0) invert(1)`, and turn the wordmark into
+   nonsense on any theme that tints instead.
+
+   Not scoped to `.fi-body-has-top-navigation`, unlike everything else in this
+   file: the top bar exists with a vertical sidebar too, a preset that darkens
+   it darkens it in both layouts, and the brand sits in the bar either way. The
+   sidebar is deliberately NOT included — it has its own background, and a
+   colour picked for a dark bar would disappear on it. */
+.fi-topbar .fi-logo {
+  color: var(--press-rail-logo-color);
+}
+
+.fi-topbar .fi-logo:is(img, svg) {
+  filter: var(--press-rail-logo-filter);
+}
+
+
+/* ==========================================================================
+   THE ROW — one line, no wrapping, scrolls if it must
+   ==========================================================================
+   A rail that overflows has failed at its job, so a preset should keep the
+   item count low enough to fit. The horizontal scroll is the safety net,
+   not the design.
+   ========================================================================== */
+
+.fi-body-has-top-navigation .fi-topbar-nav-groups {
+  flex: 1 1 0;
+  min-width: 0;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  gap: var(--press-rail-gap);
+  padding-block: var(--press-rail-pad-block);
+  scroll-snap-type: x proximity;
+}
+
+.fi-body-has-top-navigation .fi-topbar-nav-groups::-webkit-scrollbar {
+  display: none;
+}
+
+/* Edge fade: the hint that the rail continues past its edge.
+   It appears ONLY on the side that still has content behind it, which is
+   what turns a decoration into an affordance — a rail that fits shows no
+   fade at all, and a fade means "there is more this way". The two boolean
+   attributes are set by rail.js; without that script the rail still scrolls,
+   it just says nothing. They are physical, so RTL needs no special case.
+
+   GOTCHA: mask-image masks DESCENDANTS too. The group dropdown panels
+   render inside this container. They are position:fixed, so overflow does
+   not clip them, but the mask still erases them. Apply the fade only while
+   no dropdown is open: Alpine flips the panel's inline style to
+   display:block when it opens. */
+.fi-body-has-top-navigation
+  .fi-topbar-nav-groups:is([data-press-fade-left], [data-press-fade-right]):not(:has(.fi-dropdown-panel[style*="block"])) {
+  --press-fade-l: 0px;
+  --press-fade-r: 0px;
+  -webkit-mask-image: linear-gradient(to right,
+    transparent 0, black var(--press-fade-l),
+    black calc(100% - var(--press-fade-r)), transparent 100%);
+  mask-image: linear-gradient(to right,
+    transparent 0, black var(--press-fade-l),
+    black calc(100% - var(--press-fade-r)), transparent 100%);
+}
+
+.fi-body-has-top-navigation .fi-topbar-nav-groups[data-press-fade-left] {
+  --press-fade-l: var(--press-rail-fade);
+}
+
+.fi-body-has-top-navigation .fi-topbar-nav-groups[data-press-fade-right] {
+  --press-fade-r: var(--press-rail-fade);
+}
+
+
+/* ==========================================================================
+   THE ITEMS
+   ========================================================================== */
+
+.fi-body-has-top-navigation .fi-topbar-item {
+  scroll-snap-align: start;
+  flex: 0 0 auto;              /* never shrink: this is what scrolls */
+}
+
+.fi-body-has-top-navigation .fi-topbar-item .fi-topbar-item-btn {
+  position: relative;
+  border-radius: var(--press-rail-item-radius);
+  padding-inline: var(--press-rail-item-pad-x);
+  padding-block: var(--press-rail-item-pad-y);
+  font-family: var(--press-rail-item-font);
+  font-size: var(--press-rail-item-size);
+  font-weight: var(--press-rail-item-weight);
+  letter-spacing: var(--press-rail-item-tracking);
+  text-transform: var(--press-rail-item-transform);
+  color: var(--press-rail-item-color);
+  white-space: nowrap;
+  transition: background-color .15s ease, color .15s ease;
+}
+
+/* The label span carries its own factory color, which wins over the button.
+   It has to be set explicitly, not just on the button. */
+.fi-body-has-top-navigation .fi-topbar-item .fi-topbar-item-btn .fi-topbar-item-label {
+  color: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+
+.fi-body-has-top-navigation .fi-topbar-item .fi-topbar-item-btn .fi-icon {
+  display: var(--press-rail-icon-display);
+  color: var(--press-rail-item-icon-color);
+}
+
+/* The underline mechanism. Zero height by default, so presets that use a
+   filled active state pay nothing for it. */
+.fi-body-has-top-navigation .fi-topbar-item .fi-topbar-item-btn::after {
+  content: '';
+  position: absolute;
+  inset-inline: var(--press-rail-underline-inset);
+  bottom: var(--press-rail-underline-offset);
+  height: var(--press-rail-underline-height);
+  background-color: transparent;
+  transition: background-color .15s ease;
+}
+
+/* ----- Hover -------------------------------------------------------------- */
+
+.fi-body-has-top-navigation .fi-topbar-item .fi-topbar-item-btn:hover {
+  background-color: var(--press-rail-hover-bg);
+  color: var(--press-rail-hover-color);
+}
+
+.fi-body-has-top-navigation .fi-topbar-item .fi-topbar-item-btn:hover .fi-icon {
+  color: var(--press-rail-hover-color);
+}
+
+/* ----- Active ------------------------------------------------------------- */
+
+.fi-body-has-top-navigation .fi-topbar-item.fi-active .fi-topbar-item-btn {
+  background-color: var(--press-rail-active-bg);
+  color: var(--press-rail-active-color);
+  font-weight: var(--press-rail-active-weight);
+  box-shadow: var(--press-rail-active-shadow);
+}
+
+.fi-body-has-top-navigation .fi-topbar-item.fi-active .fi-topbar-item-btn .fi-icon {
+  color: var(--press-rail-active-icon-color);
+}
+
+.fi-body-has-top-navigation .fi-topbar-item.fi-active .fi-topbar-item-btn::after {
+  background-color: var(--press-rail-underline-color);
+}
+
+
+/* ==========================================================================
+   GROUP DROPDOWNS
+   ==========================================================================
+   Groups render as dropdown triggers inside the rail. Multi-column when
+   they hold enough items: this is the mega-menu, done with CSS columns on
+   the list Filament already renders.
+   ========================================================================== */
+
+.fi-body-has-top-navigation .fi-topbar-nav-groups .fi-dropdown-panel {
+  min-width: max-content;
+}
+
+.fi-body-has-top-navigation .fi-topbar-nav-groups .fi-dropdown-list:has(> :nth-child(7)) {
+  columns: 2;
+  column-gap: calc(var(--spacing) * 2);
+}
+
+
+/* ==========================================================================
+   BAR CHROME — search, notifications, avatar
+   ========================================================================== */
+
+.fi-body-has-top-navigation .fi-topbar .fi-global-search .fi-input-wrp {
+  background-color: var(--press-rail-search-bg);
+  background-image: none;
+  border-radius: var(--press-rail-search-radius);
+  --tw-ring-color: var(--press-rail-search-ring);
+}
+
+.fi-body-has-top-navigation .fi-topbar .fi-global-search .fi-input,
+.fi-body-has-top-navigation .fi-topbar .fi-global-search .fi-input::placeholder,
+.fi-body-has-top-navigation .fi-topbar .fi-global-search .fi-input-wrp .fi-icon,
+.fi-body-has-top-navigation .fi-topbar .fi-icon-btn {
+  color: var(--press-rail-chrome-color);
+}
+
+.fi-body-has-top-navigation .fi-topbar .fi-avatar {
+  --tw-ring-color: var(--press-rail-avatar-ring);
+}
+
+
+/* ==========================================================================
+   BELOW THE lg BREAKPOINT
+   ==========================================================================
+   Filament falls back to its drawer sidebar on small screens on its own.
+   The rail tokens do not apply there, and the sidebar styling from the
+   engine takes over, so mobile stays coherent without special cases.
+   ========================================================================== */

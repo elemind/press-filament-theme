@@ -1,0 +1,350 @@
+/* ==========================================================================
+   PRESS — VELLUM
+   ==========================================================================
+   The soft one. A washed canvas, translucent surfaces, wide radii and a
+   violet that never raises its voice. Named after the translucent skin
+   that was written on before paper: you see a little of what is behind it.
+
+   The rail is a row of glass pills floating on the wash.
+
+   PANEL CONFIG
+       ->topNavigation()
+       ->font('Figtree')
+       ->monoFont('IBM Plex Mono')
+   ========================================================================== */
+
+:root {
+  /* ----- Iris, anchored on #6366f1-ish but desaturated one notch ---------
+     Soft enough to sit under a translucent surface without bleeding
+     through it as a stain. */
+  --press-primary-50:  oklch(0.972 0.014 288);
+  --press-primary-100: oklch(0.944 0.030 288);
+  --press-primary-200: oklch(0.896 0.058 288);
+  --press-primary-300: oklch(0.826 0.098 288);
+  --press-primary-400: oklch(0.740 0.140 288);
+  --press-primary-500: oklch(0.652 0.176 288);
+  --press-primary-600: oklch(0.532 0.196 288);   /* badge text on the 50 tint */
+  --press-primary-700: oklch(0.498 0.184 288);
+  --press-primary-800: oklch(0.424 0.152 288);
+  --press-primary-900: oklch(0.366 0.120 288);
+  --press-primary-950: oklch(0.262 0.080 288);
+
+  /* ----- Cool neutrals with a violet cast --------------------------------
+     Hue 288 at very low chroma, so the grays belong to the accent instead
+     of sitting next to it. */
+  --press-neutral-50:  oklch(0.984 0.003 288);
+  --press-neutral-100: oklch(0.964 0.006 288);
+  --press-neutral-200: oklch(0.922 0.010 288);
+  --press-neutral-300: oklch(0.872 0.013 288);
+  --press-neutral-400: oklch(0.706 0.018 288);
+  --press-neutral-500: oklch(0.554 0.020 288);
+  --press-neutral-600: oklch(0.446 0.022 288);
+  --press-neutral-700: oklch(0.370 0.022 288);
+  --press-neutral-800: oklch(0.274 0.020 288);
+  --press-neutral-900: oklch(0.208 0.018 288);
+  --press-neutral-950: oklch(0.146 0.016 288);
+
+  /* ----- Type ------------------------------------------------------------ */
+  --press-font-sans: 'Figtree', ui-sans-serif, system-ui;
+  --press-font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --press-font-heading: var(--press-font-sans);
+  --press-heading-weight: 600;
+  --press-heading-tracking: -0.025em;
+  --press-heading-size: 1.75rem;
+
+  --press-label-weight: 600;
+  --press-label-tracking: 0.04em;
+
+  /* ----- Shape -----------------------------------------------------------
+     Wide. Everything here is a rounded plate. */
+  --press-radius-sm: .5rem;
+  --press-radius-md: .75rem;
+  --press-radius-lg: 1.25rem;
+
+  /* ----- Surfaces --------------------------------------------------------
+     Translucent white over the washed canvas, so the gradient underneath
+     shows through the cards. */
+  --press-bg-app:     oklch(0.972 0.008 288);
+  --press-bg-surface: color-mix(in oklab, oklch(1 0 0) 78%, transparent);
+  /* High enough that content scrolling underneath reads as a blur and not
+     as text competing with the nav labels. Glass, not cellophane. */
+  --press-bg-topbar:  color-mix(in oklab, oklch(1 0 0) 86%, transparent);
+  --press-bg-overlay: color-mix(in oklab, oklch(1 0 0) 92%, transparent);
+
+  --press-border:        color-mix(in oklab, var(--press-neutral-950) 8%, transparent);
+  --press-border-subtle: color-mix(in oklab, var(--press-neutral-950) 5%, transparent);
+  --press-row-rule:      color-mix(in oklab, var(--press-neutral-950) 5%, transparent);
+  --press-row-hover:     color-mix(in oklab, var(--press-primary-500) 6%, transparent);
+
+  /* Soft, wide, low opacity. The light comes from far away. */
+  --press-shadow-surface: 0 4px 24px -6px oklch(0.30 0.06 288 / .10), 0 1px 3px 0 oklch(0.30 0.06 288 / .04);
+  --press-shadow-input:   0 1px 2px 0 oklch(0.30 0.06 288 / .05);
+  --press-shadow-overlay: 0 24px 48px -12px oklch(0.25 0.06 288 / .24);
+
+  /* ----- The glass pills -------------------------------------------------- */
+  --press-rail-bg: var(--press-bg-topbar);
+  --press-rail-ring: color-mix(in oklab, oklch(1 0 0) 50%, transparent);
+  --press-rail-pad-block: calc(var(--spacing) * 2.5);
+  --press-rail-gap: calc(var(--spacing) * 1.5);
+  --press-rail-fade: 1.5rem;
+
+  --press-rail-icon-display: inline-flex;
+  --press-rail-item-radius: 9999px;
+  --press-rail-item-pad-x: calc(var(--spacing) * 4);
+  --press-rail-item-pad-y: calc(var(--spacing) * 2);
+  --press-rail-item-weight: 500;
+  --press-rail-item-color: var(--press-neutral-600);
+  --press-rail-item-icon-color: var(--press-neutral-400);
+
+  --press-rail-hover-bg: color-mix(in oklab, oklch(1 0 0) 70%, transparent);
+  --press-rail-hover-color: var(--press-neutral-900);
+
+  --press-rail-active-bg: color-mix(in oklab, oklch(1 0 0) 92%, transparent);
+  --press-rail-active-color: var(--press-primary-700);
+  --press-rail-active-icon-color: var(--press-primary-600);
+  --press-rail-active-weight: 600;
+  --press-rail-active-shadow:
+    0 2px 10px -2px oklch(0.30 0.06 288 / .16),
+    inset 0 0 0 1px color-mix(in oklab, oklch(1 0 0) 90%, transparent);
+  --press-rail-underline-height: 0;
+
+  /* Declared in :root AND in .dark below. A preset's :root has the same
+     specificity as the engine's .dark and is loaded after it, so a token
+     set only here would also win in dark mode and the engine's dark value
+     would never apply. */
+  --press-rail-chrome-color: var(--press-neutral-600);
+  --press-rail-search-bg: color-mix(in oklab, oklch(1 0 0) 60%, transparent);
+  --press-rail-search-ring: color-mix(in oklab, oklch(1 0 0) 70%, transparent);
+  --press-rail-search-radius: 9999px;
+  --press-rail-avatar-ring: color-mix(in oklab, oklch(1 0 0) 80%, transparent);
+}
+
+/* ----- Dusk ----------------------------------------------------------------
+   The wash goes deep violet and the surfaces become lit smoke rather than
+   frosted glass. Translucency is kept: it is the whole idea. */
+.dark {
+  --press-bg-app:     oklch(0.148 0.020 288);
+  --press-bg-surface: color-mix(in oklab, oklch(0.30 0.024 288) 62%, transparent);
+  --press-bg-topbar:  color-mix(in oklab, oklch(0.26 0.024 288) 84%, transparent);
+  --press-bg-overlay: color-mix(in oklab, oklch(0.26 0.022 288) 94%, transparent);
+
+  --press-border:        color-mix(in oklab, oklch(1 0 0) 11%, transparent);
+  --press-border-subtle: color-mix(in oklab, oklch(1 0 0) 7%, transparent);
+  --press-row-rule:      color-mix(in oklab, oklch(1 0 0) 6%, transparent);
+  --press-row-hover:     color-mix(in oklab, var(--press-primary-400) 10%, transparent);
+
+  --press-shadow-surface: 0 4px 24px -6px oklch(0 0 0 / .34);
+  --press-shadow-input: 0 0 #0000;
+  --press-shadow-overlay: 0 24px 48px -12px oklch(0 0 0 / .6);
+
+  --press-rail-ring: color-mix(in oklab, oklch(1 0 0) 10%, transparent);
+  --press-rail-item-color: var(--press-neutral-400);
+  --press-rail-hover-bg: color-mix(in oklab, oklch(1 0 0) 8%, transparent);
+  --press-rail-hover-color: oklch(0.96 0.006 288);
+  --press-rail-active-bg: color-mix(in oklab, oklch(1 0 0) 14%, transparent);
+  --press-rail-active-color: var(--press-primary-300);
+  --press-rail-active-icon-color: var(--press-primary-300);
+  --press-rail-active-shadow:
+    0 2px 12px -2px oklch(0 0 0 / .5),
+    inset 0 0 0 1px color-mix(in oklab, oklch(1 0 0) 16%, transparent);
+  --press-rail-chrome-color: var(--press-neutral-400);
+  --press-rail-search-bg: color-mix(in oklab, oklch(1 0 0) 7%, transparent);
+  --press-rail-search-ring: color-mix(in oklab, oklch(1 0 0) 12%, transparent);
+  --press-rail-avatar-ring: color-mix(in oklab, oklch(1 0 0) 22%, transparent);
+}
+
+
+/* ==========================================================================
+   SIGNATURES
+   ========================================================================== */
+
+/* ----- The wash ------------------------------------------------------------
+   Three very large, very soft radial gradients. It lives in a token rather
+   than in a rule so the engine can reuse it on the auth pages: a glass card
+   with nothing behind it is just a white card, which is what the login page
+   became when the backdrop was only painted on .fi-body.
+
+   Fixed attachment, so the light stays put while the page scrolls: the
+   canvas is the room, not the paper. */
+:root {
+  --press-backdrop:
+    radial-gradient(70rem 44rem at 8% 4%,
+      color-mix(in oklab, var(--press-primary-500) 26%, transparent), transparent 68%),
+    radial-gradient(58rem 38rem at 94% 2%,
+      color-mix(in oklab, oklch(0.72 0.13 200) 22%, transparent), transparent 66%),
+    radial-gradient(52rem 34rem at 62% 96%,
+      color-mix(in oklab, var(--press-primary-400) 14%, transparent), transparent 70%);
+}
+
+.dark {
+  --press-backdrop:
+    radial-gradient(70rem 44rem at 8% 4%,
+      color-mix(in oklab, var(--press-primary-500) 30%, transparent), transparent 68%),
+    radial-gradient(58rem 38rem at 94% 2%,
+      color-mix(in oklab, oklch(0.55 0.14 200) 26%, transparent), transparent 66%),
+    radial-gradient(52rem 34rem at 62% 96%,
+      color-mix(in oklab, var(--press-primary-600) 20%, transparent), transparent 70%);
+}
+
+/* ----- Glass needs blur to be glass ----------------------------------------
+   Translucency without a backdrop blur reads as a bug, not as a material.
+   Kept to the frame and the floating layers: blurring every card in a long
+   table view costs more than it gives. */
+.fi-topbar,
+.fi-dropdown-panel,
+.fi-modal-window,
+.fi-section:not(.fi-section-not-contained):not(.fi-aside):not(.fi-secondary),
+.fi-ta-ctn,
+.fi-wi-stats-overview-stat {
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+}
+
+/* ----- An inner highlight on every plate -----------------------------------
+   One pixel of near-white on the inside of the top edge. It is what makes
+   a translucent rectangle read as a lit surface. */
+.fi-section:not(.fi-section-not-contained):not(.fi-aside):not(.fi-secondary),
+.fi-ta-ctn,
+.fi-wi-stats-overview-stat {
+  --tw-inset-shadow: inset 0 1px 0 0 color-mix(in oklab, oklch(1 0 0) 55%, transparent);
+}
+
+.dark .fi-section:not(.fi-section-not-contained):not(.fi-aside):not(.fi-secondary),
+.dark .fi-ta-ctn,
+.dark .fi-wi-stats-overview-stat {
+  --tw-inset-shadow: inset 0 1px 0 0 color-mix(in oklab, oklch(1 0 0) 9%, transparent);
+}
+
+/* ----- Wide radii versus flush colour bars ---------------------------------
+   A common pattern in panel markup: a card clips its children and puts a
+   thin coloured bar flush against its top edge. At a 4px radius nobody
+   notices; at Vellum's 20px the corners eat most of the bar and what is left
+   reads as a mistake.
+
+   Where a container clips a bar sitting flush at the top, the top corners
+   square off so the bar is shown whole. The rest of the card keeps its
+   radius, so the shape still belongs to the theme. */
+[class*="overflow-hidden"]:has(> [class~="h-1"]:first-child),
+[class*="overflow-hidden"]:has(> [class~="h-1.5"]:first-child) {
+  border-start-start-radius: 0;
+  border-start-end-radius: 0;
+}
+
+/* ----- Stat values, soft and large ----------------------------------------- */
+.fi-wi-stats-overview-stat-value {
+  font-size: 2.125rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+/* ----- Status ramps that belong to this palette -----------------------------
+   Tailwind's factory red, green and amber are the loudest thing on a page
+   built out of washed violet: an alert here should feel like a raised voice,
+   not a siren. Same three signals, mixed down — coral, sage, warm amber —
+   and all three pulled toward the neutral hue so they sit on the glass
+   instead of on top of it. */
+:root:root {
+  --danger-50:  oklch(0.972 0.014 18);
+  --danger-100: oklch(0.940 0.030 18);
+  --danger-200: oklch(0.886 0.058 18);
+  --danger-300: oklch(0.812 0.098 18);
+  --danger-400: oklch(0.716 0.146 18);
+  --danger-500: oklch(0.646 0.170 18);
+  --danger-600: oklch(0.572 0.174 18);
+  --danger-700: oklch(0.498 0.154 18);
+  --danger-800: oklch(0.428 0.128 18);
+  --danger-900: oklch(0.370 0.104 18);
+  --danger-950: oklch(0.264 0.070 18);
+
+  --success-50:  oklch(0.972 0.016 162);
+  --success-100: oklch(0.940 0.034 162);
+  --success-200: oklch(0.888 0.062 162);
+  --success-300: oklch(0.816 0.096 162);
+  --success-400: oklch(0.722 0.118 162);
+  --success-500: oklch(0.640 0.124 162);
+  --success-600: oklch(0.556 0.114 162);
+  --success-700: oklch(0.472 0.096 162);
+  --success-800: oklch(0.400 0.080 162);
+  --success-900: oklch(0.346 0.066 162);
+  --success-950: oklch(0.246 0.046 162);
+
+  --warning-50:  oklch(0.976 0.018 70);
+  --warning-100: oklch(0.946 0.040 70);
+  --warning-200: oklch(0.896 0.076 70);
+  --warning-300: oklch(0.828 0.114 70);
+  --warning-400: oklch(0.762 0.132 70);
+  --warning-500: oklch(0.700 0.134 70);
+  --warning-600: oklch(0.612 0.122 70);
+  --warning-700: oklch(0.518 0.102 70);
+  --warning-800: oklch(0.440 0.086 70);
+  --warning-900: oklch(0.382 0.072 70);
+  --warning-950: oklch(0.270 0.050 70);
+}
+
+/* ----- Pills everywhere ---------------------------------------------------- */
+.fi-btn,
+.fi-badge {
+  border-radius: 9999px;
+}
+
+/* ----- A button group cannot be a pill AND a segmented control --------------
+   Filament draws a button group as one segmented shape: a ring around the
+   set, square joins between the members. Making every .fi-btn a pill breaks
+   that shape, and what is left is two pills sitting inside a rounded box —
+   which is exactly how Provider read next to Method, whose options are plain
+   pills with nothing around them.
+
+   The group gives up its chrome and its members space out, so a set of
+   options looks the same wherever it appears. The members also drop the
+   button shadow: in a group they sit shoulder to shoulder and the shadows
+   pile up into a band under the whole row. */
+.fi-btn-group {
+  box-shadow: none;
+  --tw-ring-shadow: 0 0 #0000;
+  gap: calc(var(--spacing) * 1.5);
+  flex-wrap: wrap;
+}
+
+.fi-btn-group-btn:not(.fi-outlined) {
+  box-shadow: none;
+}
+
+/* ----- A button with light in it -------------------------------------------
+   The gradient is LIGHT, not colour. Painting an actual violet gradient here
+   looked right on a solid primary button and wrong everywhere else: Filament
+   gives an unselected toggle in a button group exactly the same classes as a
+   solid action and distinguishes them only by background-color, so a
+   background-image keyed to the primary painted every unselected option
+   violet — a form full of options that all looked chosen.
+
+   A white-to-transparent veil sits on top of whatever colour is underneath:
+   it lights a violet button and is invisible on a white one. */
+.fi-btn:not(.fi-outlined) {
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in oklab, oklch(1 0 0) 16%, transparent),
+    transparent);
+  box-shadow:
+    inset 0 1px 0 0 color-mix(in oklab, oklch(1 0 0) 26%, transparent),
+    0 1px 3px 0 oklch(0.30 0.06 288 / .12);
+}
+
+
+/* ----- The fourth signal ----------------------------------------------------
+   The three ramps above were mixed down into this palette when the preset was
+   written; `info` was left at Tailwind's blue, which is the one saturated
+   thing left on a page made of washed violet. A sky pulled toward the iris:
+   still unmistakably "new", now made of the same light as everything else. */
+:root:root {
+  --info-50: oklch(0.972 0.014 240);
+  --info-100: oklch(0.940 0.030 240);
+  --info-200: oklch(0.886 0.056 240);
+  --info-300: oklch(0.812 0.092 240);
+  --info-400: oklch(0.712 0.122 240);
+  --info-500: oklch(0.606 0.132 240);
+  --info-600: oklch(0.508 0.128 240);
+  --info-700: oklch(0.442 0.112 240);
+  --info-800: oklch(0.384 0.094 240);
+  --info-900: oklch(0.336 0.078 240);
+  --info-950: oklch(0.242 0.052 240);
+}

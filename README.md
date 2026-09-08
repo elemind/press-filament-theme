@@ -1,81 +1,131 @@
-# This is my package press-filament-theme
+# Press — a Filament theme in four editions
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/elemind/press-filament-theme.svg?style=flat-square)](https://packagist.org/packages/elemind/press-filament-theme)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/elemind/press-filament-theme/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/elemind/press-filament-theme/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/elemind/press-filament-theme/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/elemind/press-filament-theme/actions?query=workflow%3A"Fix+PHP+code+styling"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/elemind/press-filament-theme.svg?style=flat-square)](https://packagist.org/packages/elemind/press-filament-theme)
 
+Press is an editorial theme for Filament v5, built on a shared engine and shipped in four
+editions. Each one is a different publication, not a different accent colour: type, shape,
+navigation and colour move together.
 
+| Edition | Character |
+|---|---|
+| **Broadsheet** | Masthead red, warm neutrals, Instrument Serif headings, small caps under a double rule |
+| **Telex** | Phosphor green on cold graphite, IBM Plex Mono headings, a bar that stays dark in both modes |
+| **Gutter** | Ultramarine on pure neutrals, Archivo, zero radius everywhere, edge-to-edge nav blocks |
+| **Vellum** | Iris on violet neutrals, Figtree, generous radii, glass pills and a three-radial wash |
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+Every edition passes WCAG AA across the panel, in light and dark.
 
 ## Installation
 
-You can install the package via composer:
-
 ```bash
 composer require elemind/press-filament-theme
+php artisan filament:assets
 ```
 
-> [!IMPORTANT]
-> If you have not set up a custom theme and are using Filament Panels follow the instructions in the [Filament Docs](https://filamentphp.com/docs/4.x/styling/overview#creating-a-custom-theme) first.
+Register the plugin in your panel provider:
 
-After setting up a custom theme add the plugin's views to your theme css file or your app's css file if using the standalone packages.
+```php
+use Elemind\PressFilamentTheme\PressFilamentTheme;
+use Elemind\PressFilamentTheme\Enums\PressVariant;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        ->plugin(
+            PressFilamentTheme::make()->variant(PressVariant::Telex)
+        );
+}
+```
+
+Each edition also has a shortcut:
+
+```php
+PressFilamentTheme::make()->broadsheet();
+PressFilamentTheme::make()->telex();
+PressFilamentTheme::make()->gutter();
+PressFilamentTheme::make()->vellum();
+```
+
+With no edition set you get Broadsheet.
+
+## The rail
+
+Press is built around a horizontal navigation. The plugin turns on `topNavigation()` for you
+and ships the script that marks which edge of the rail still has content behind it.
+
+```php
+PressFilamentTheme::make()->telex()->rail(false); // keep Filament's sidebar
+```
+
+The theme degrades to the sidebar on purpose: nothing breaks, the rail styling simply
+does not apply.
+
+## Two ways to use it
+
+### Precompiled (default)
+
+The package ships four compiled stylesheets, one per edition. `composer require` and
+`php artisan filament:assets` is the whole setup — no npm, no build step in your app.
+
+The trade-off is the one every precompiled Filament theme has: the CSS is built without
+seeing your app, so **Tailwind utilities you write in your own Blade files are not
+generated**. Filament's own UI is unaffected — it uses semantic `fi-*` classes throughout.
+
+### From source
+
+If you write Tailwind utilities in your Blade files, or you need to compose Press with CSS
+from other plugins, compile it yourself. Publish the sources:
+
+```bash
+php artisan vendor:publish --tag="press-filament-theme-css"
+```
+
+Then import them into your panel's theme file, after Filament's and before your `@source`
+directives:
 
 ```css
-@source '../../../../vendor/elemind/press-filament-theme/resources/**/*.blade.php';
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@import '../../press/engine/engine.css';
+@import '../../press/engine/rail.css';
+@import '../../press/presets/telex.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
 ```
 
-You can publish and run the migrations with:
+You can skip the publish step and import straight out of `vendor/` if you would rather not
+duplicate the files — the paths are longer and move with the package:
 
-```bash
-php artisan vendor:publish --tag="press-filament-theme-migrations"
-php artisan migrate
+```css
+@import '../../../../vendor/elemind/press-filament-theme/resources/css/engine/engine.css';
 ```
 
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --tag="press-filament-theme-config"
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="press-filament-theme-views"
-```
-
-This is the contents of the published config file:
+Keep the plugin registered either way: it still applies the fonts and the rail script. It
+detects `viteTheme()` on the panel and stops short of setting its own theme, so the two do
+not fight. Be aware that `Panel::getTheme()` gives `viteTheme()` precedence unconditionally
+— once your panel compiles its own CSS, that file is the only one Filament will load, and
+`applyTheme(true)` cannot change that.
 
 ```php
-return [
-];
+PressFilamentTheme::make()->telex()->applyTheme(false); // never set the packaged theme
 ```
 
-## Usage
+## Fonts
 
-```php
-$pressFilamentTheme = new Elemind\PressFilamentTheme();
-echo $pressFilamentTheme->echoPhrase('Hello, Elemind!');
-```
+Fonts are served from [Bunny Fonts](https://fonts.bunny.net) (GDPR-friendly, no Google
+Fonts request). Each edition sets its own sans, mono and — for Broadsheet — serif face.
+Offline installs will want to self-host them.
 
-## Testing
+## Development
 
 ```bash
+npm install
+npm run build          # all four editions
+npm run dev:telex      # watch one
 composer test
 ```
-
-## Changelog
-
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
-## Contributing
-
-Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
-
-## Security Vulnerabilities
-
-Please review [our security policy](.github/SECURITY.md) on how to report security vulnerabilities.
 
 ## Credits
 

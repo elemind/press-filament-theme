@@ -1,0 +1,345 @@
+/* ==========================================================================
+   PRESS — GUTTER
+   ==========================================================================
+   The Swiss one. Hard white, hard black, one saturated primary, zero
+   radius, zero shadow. Structure comes from the grid and from the rule.
+   Named after the typographic gutter: the space between columns that does
+   the work nobody notices.
+
+   The rail is a row of blocks. The active section is a filled block, not a
+   pill and not an underline, because in this language a state is a plane
+   of colour.
+
+   PANEL CONFIG
+       ->topNavigation()
+       ->font('Archivo')
+       ->monoFont('IBM Plex Mono')
+   ========================================================================== */
+
+:root {
+  /* ----- Ultramarine, anchored on #1a1ae6-ish (oklch 0.42 0.26 267) ------
+     Saturated to the edge of the display gamut. A Swiss primary is not a
+     tint, it is a pigment, and it has to hold its own against pure black. */
+  --press-primary-50:  oklch(0.965 0.020 267);
+  --press-primary-100: oklch(0.928 0.044 267);
+  --press-primary-200: oklch(0.862 0.088 267);
+  --press-primary-300: oklch(0.768 0.148 267);
+  --press-primary-400: oklch(0.682 0.196 267);   /* dark-mode fills: carries near-black text */
+  --press-primary-500: oklch(0.520 0.262 267);
+  --press-primary-600: oklch(0.420 0.258 267);
+  --press-primary-700: oklch(0.362 0.222 267);
+  --press-primary-800: oklch(0.310 0.180 267);
+  --press-primary-900: oklch(0.268 0.142 267);
+  --press-primary-950: oklch(0.192 0.098 267);
+
+  /* ----- True neutrals ---------------------------------------------------
+     Zero chroma all the way down. Any hue in the ramp would soften the
+     contrast this theme is built on. */
+  --press-neutral-50:  oklch(0.985 0 0);
+  --press-neutral-100: oklch(0.960 0 0);
+  --press-neutral-200: oklch(0.915 0 0);
+  --press-neutral-300: oklch(0.860 0 0);
+  --press-neutral-400: oklch(0.690 0 0);
+  --press-neutral-500: oklch(0.540 0 0);
+  --press-neutral-600: oklch(0.430 0 0);
+  --press-neutral-700: oklch(0.350 0 0);
+  --press-neutral-800: oklch(0.250 0 0);
+  --press-neutral-900: oklch(0.175 0 0);
+  --press-neutral-950: oklch(0.105 0 0);
+
+  /* ----- Type ------------------------------------------------------------
+     Archivo is a grotesque with real width. Headings are set tight and
+     heavy: the size difference does the hierarchy, not the colour. */
+  --press-font-sans: 'Archivo', ui-sans-serif, system-ui;
+  --press-font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --press-font-heading: var(--press-font-sans);
+  --press-heading-weight: 700;
+  --press-heading-tracking: -0.035em;
+  --press-heading-size: 2rem;
+
+  --press-label-size: 0.6875rem;
+  --press-label-weight: 700;
+  --press-label-tracking: 0.10em;
+
+  /* ----- Shape -----------------------------------------------------------
+     Zero. All of it. */
+  --press-radius-sm: 0;
+  --press-radius-md: 0;
+  --press-radius-lg: 0;
+
+  /* ----- Surfaces --------------------------------------------------------
+     Paper white cards on a light gray field, separated by black rules. */
+  --press-bg-app:     oklch(0.945 0 0);
+  --press-bg-surface: oklch(1 0 0);
+  --press-bg-topbar:  oklch(1 0 0);
+  --press-bg-overlay: oklch(1 0 0);
+
+  /* Borders are drawn, not suggested. */
+  --press-border:        oklch(0.105 0 0);
+  --press-border-subtle: color-mix(in oklab, var(--press-neutral-950) 22%, transparent);
+  --press-row-rule:      color-mix(in oklab, var(--press-neutral-950) 14%, transparent);
+  --press-row-hover:     color-mix(in oklab, var(--press-primary-500) 8%, transparent);
+
+  /* No elevation whatsoever. */
+  --press-shadow-surface: 0 0 #0000;
+  --press-shadow-input: 0 0 #0000;
+  --press-shadow-overlay: 0 0 #0000;
+
+  /* ----- The block row ---------------------------------------------------
+     Square, edge to edge, no gaps. The active item is a filled block of
+     ultramarine with white type. */
+  --press-rail-bg: var(--press-bg-surface);
+  --press-rail-ring: transparent;
+  --press-rail-pad-block: 0;
+  --press-rail-gap: 0;
+  --press-rail-fade: 0px;
+
+  --press-rail-icon-display: none;
+  --press-rail-item-radius: 0;
+  --press-rail-item-pad-x: calc(var(--spacing) * 4);
+  --press-rail-item-pad-y: calc(var(--spacing) * 4);
+  --press-rail-item-size: 0.75rem;
+  --press-rail-item-weight: 700;
+  --press-rail-item-tracking: 0.08em;
+  --press-rail-item-transform: uppercase;
+  --press-rail-item-color: var(--press-neutral-950);
+
+  --press-rail-hover-bg: var(--press-neutral-950);
+  --press-rail-hover-color: oklch(1 0 0);
+
+  --press-rail-active-bg: var(--press-primary-500);
+  --press-rail-active-color: oklch(1 0 0);
+  --press-rail-active-weight: 700;
+  --press-rail-underline-height: 0;
+
+  --press-rail-chrome-color: var(--press-neutral-950);
+  --press-rail-search-ring: var(--press-neutral-950);
+  --press-rail-search-radius: 0;
+  --press-rail-avatar-ring: var(--press-neutral-950);
+}
+
+/* ----- Inverted, not dimmed -----------------------------------------------
+   The Swiss dark mode is the negative of the poster: the plane flips, the
+   pigment stays. The primary lifts two stops so it still reads as pigment
+   rather than as a hole in the page. */
+.dark {
+  --press-bg-app:     oklch(0.105 0 0);
+  --press-bg-surface: oklch(0.165 0 0);
+  --press-bg-topbar:  oklch(0.165 0 0);
+  --press-bg-overlay: oklch(0.195 0 0);
+
+  --press-border:        oklch(0.98 0 0);
+  --press-border-subtle: color-mix(in oklab, oklch(1 0 0) 22%, transparent);
+  --press-row-rule:      color-mix(in oklab, oklch(1 0 0) 14%, transparent);
+  --press-row-hover:     color-mix(in oklab, var(--press-primary-400) 12%, transparent);
+
+  --press-shadow-surface: 0 0 #0000;
+  --press-shadow-overlay: 0 0 #0000;
+
+  --press-rail-item-color: oklch(0.98 0 0);
+  --press-rail-hover-bg: oklch(0.98 0 0);
+  --press-rail-hover-color: oklch(0.105 0 0);
+  --press-rail-active-bg: var(--press-primary-400);
+  --press-rail-active-color: oklch(0.105 0 0);
+  --press-rail-chrome-color: oklch(0.94 0 0);
+  --press-rail-search-ring: color-mix(in oklab, oklch(1 0 0) 40%, transparent);
+  --press-rail-avatar-ring: oklch(0.98 0 0);
+}
+
+
+/* ==========================================================================
+   SIGNATURES
+   ========================================================================== */
+
+/* ----- The black rule under the bar ---------------------------------------
+   Two pixels of pure ink. It is the single most Swiss thing in the file. */
+.fi-body-has-top-navigation .fi-topbar {
+  box-shadow: 0 2px 0 0 var(--press-neutral-950);
+}
+
+.dark .fi-body-has-top-navigation .fi-topbar,
+.fi-body-has-top-navigation.dark .fi-topbar {
+  box-shadow: 0 2px 0 0 oklch(0.98 0 0);
+}
+
+/* ----- Cards are drawn boxes ----------------------------------------------
+   A 1px black ring at full opacity, not a soft hairline. */
+.fi-section:not(.fi-section-not-contained):not(.fi-aside):not(.fi-secondary),
+.fi-section.fi-aside:not(.fi-section-not-contained) > .fi-section-content-ctn,
+.fi-ta-ctn,
+.fi-wi-stats-overview-stat,
+.fi-simple-main,
+.fi-dropdown-panel,
+.fi-modal-window {
+  --tw-ring-color: var(--press-border);
+}
+
+/* ----- Table headers as a black band ---------------------------------------
+   The band has to be unbroken to read as a band. Filament's selection
+   checkbox column and the trailing actions column are th elements WITHOUT
+   the .fi-ta-header-cell class, so styling that class alone leaves a white
+   notch at each end of the row. Every th in the head gets the ink, and the
+   internal cell borders are removed so the band is one plane. */
+.fi-ta-ctn thead th {
+  background-color: var(--press-neutral-950);
+  color: oklch(1 0 0);
+  border: none;
+}
+
+.dark .fi-ta-ctn thead th {
+  background-color: oklch(0.98 0 0);
+  color: oklch(0.105 0 0);
+}
+
+/* ----- Stat values as poster numerals -------------------------------------- */
+.fi-wi-stats-overview-stat-value {
+  font-size: 2.75rem;
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.fi-wi-stats-overview-stat-label {
+  font-size: var(--press-label-size);
+  font-weight: 700;
+  letter-spacing: var(--press-label-tracking);
+  text-transform: uppercase;
+  color: var(--press-label-color);
+}
+
+/* ----- Buttons are blocks of pigment --------------------------------------- */
+.fi-btn {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+/* ----- Badges are blocks too ----------------------------------------------- */
+.fi-badge {
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.625rem;
+}
+
+/* ----- The login page gets the grid it is named after -----------------------
+   Gutter is the space between columns, so the auth page shows the columns.
+   Two repeating gradients, one module of 6rem, drawn faintly enough to be
+   structure rather than decoration — and the card sits on it as a block on
+   a layout sheet. */
+:root {
+  --press-login-backdrop:
+    repeating-linear-gradient(to right,
+      color-mix(in oklab, var(--press-neutral-950) 9%, transparent) 0 1px,
+      transparent 1px 6rem),
+    repeating-linear-gradient(to bottom,
+      color-mix(in oklab, var(--press-neutral-950) 9%, transparent) 0 1px,
+      transparent 1px 6rem);
+}
+
+.dark {
+  --press-login-backdrop:
+    repeating-linear-gradient(to right,
+      color-mix(in oklab, oklch(1 0 0) 10%, transparent) 0 1px,
+      transparent 1px 6rem),
+    repeating-linear-gradient(to bottom,
+      color-mix(in oklab, oklch(1 0 0) 10%, transparent) 0 1px,
+      transparent 1px 6rem);
+}
+
+/* ----- The one heading that was still speaking sentence case ---------------- */
+.fi-simple-header-heading {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* ----- Field labels speak the same language --------------------------------
+   Everything else in this theme is set in small caps: headers, buttons,
+   badges, toggles. Field labels in sentence case were the one place where
+   Gutter dropped its own accent. */
+.fi-fo-field-label {
+  font-size: var(--press-label-size);
+  font-weight: var(--press-label-weight);
+  letter-spacing: var(--press-label-tracking);
+  text-transform: var(--press-label-transform);
+}
+
+/* ----- Structure is black, content is a step below --------------------------
+   With every input ringed in full black inside a card ringed in full black,
+   the grid loses its hierarchy and the form reads as a pile of boxes. The
+   blocks keep the pigment; the fields inside them step back one notch. It is
+   still a drawn line, not a hairline — this theme does not do hairlines. */
+.fi-input-wrp {
+  --tw-ring-shadow: 0 0 0 1px color-mix(in oklab, var(--press-neutral-950) 62%, transparent);
+}
+
+.dark .fi-input-wrp {
+  --tw-ring-shadow: 0 0 0 1px color-mix(in oklab, oklch(1 0 0) 42%, transparent);
+}
+
+/* ----- Poster pigments for the status ramps --------------------------------
+   Filament's factory danger/success/warning are Tailwind's, and next to a
+   saturated ultramarine they read as a website's defaults rather than as a
+   palette anybody chose. Same three signals, mixed as pigments: vermilion,
+   a flat chrome yellow, a full green. */
+:root:root {
+  --danger-50:  oklch(0.968 0.018 29);
+  --danger-100: oklch(0.928 0.044 29);
+  --danger-200: oklch(0.868 0.086 29);
+  --danger-300: oklch(0.782 0.146 29);
+  --danger-400: oklch(0.672 0.208 29);
+  --danger-500: oklch(0.588 0.232 29);
+  --danger-600: oklch(0.522 0.222 29);
+  --danger-700: oklch(0.452 0.192 29);
+  --danger-800: oklch(0.388 0.158 29);
+  --danger-900: oklch(0.334 0.128 29);
+  --danger-950: oklch(0.238 0.084 29);
+
+  --warning-50:  oklch(0.982 0.024 92);
+  --warning-100: oklch(0.952 0.058 92);
+  --warning-200: oklch(0.906 0.108 92);
+  --warning-300: oklch(0.856 0.148 92);
+  --warning-400: oklch(0.806 0.166 92);
+  --warning-500: oklch(0.742 0.158 92);
+  --warning-600: oklch(0.638 0.136 92);
+  --warning-700: oklch(0.532 0.114 92);
+  --warning-800: oklch(0.446 0.094 92);
+  --warning-900: oklch(0.382 0.078 92);
+  --warning-950: oklch(0.268 0.054 92);
+
+  --success-50:  oklch(0.966 0.030 150);
+  --success-100: oklch(0.930 0.062 150);
+  --success-200: oklch(0.872 0.106 150);
+  --success-300: oklch(0.788 0.148 150);
+  --success-400: oklch(0.690 0.166 150);
+  --success-500: oklch(0.598 0.158 150);
+  --success-600: oklch(0.516 0.140 150);
+  --success-700: oklch(0.438 0.118 150);
+  --success-800: oklch(0.372 0.098 150);
+  --success-900: oklch(0.322 0.082 150);
+  --success-950: oklch(0.226 0.056 150);
+}
+
+
+/* ----- The fourth process ink -----------------------------------------------
+   Filament's `info` is Tailwind blue, and next to a full ultramarine primary
+   it is a second blue nobody chose — a `New` badge that could be mistaken for
+   a primary action. This palette is already three of the four process inks;
+   `info` becomes the fourth. Cyan sits far enough from ultramarine to be read
+   as a different signal and still belongs to the same press. */
+:root:root {
+  --info-50:  oklch(0.968 0.020 218);
+  --info-100: oklch(0.928 0.048 218);
+  --info-200: oklch(0.868 0.084 218);
+  --info-300: oklch(0.782 0.118 218);
+  --info-400: oklch(0.672 0.136 218);
+  --info-500: oklch(0.588 0.134 218);
+  --info-600: oklch(0.522 0.124 218);
+  --info-700: oklch(0.452 0.108 218);
+  --info-800: oklch(0.388 0.090 218);
+  --info-900: oklch(0.334 0.074 218);
+  --info-950: oklch(0.238 0.050 218);
+}
