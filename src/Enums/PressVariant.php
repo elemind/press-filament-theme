@@ -20,6 +20,14 @@ enum PressVariant: string
         return 'press-' . $this->value;
     }
 
+    /**
+     * The id the preset alone is registered under, without the engine around it.
+     */
+    public function getPresetId(): string
+    {
+        return 'press-preset-' . $this->value;
+    }
+
     public function getLabel(): string
     {
         return match ($this) {
@@ -27,6 +35,16 @@ enum PressVariant: string
             self::Telex => 'Telex',
             self::Gutter => 'Gutter',
             self::Vellum => 'Vellum',
+        };
+    }
+
+    public function getDescription(): string
+    {
+        return match ($this) {
+            self::Broadsheet => 'Masthead red on warm neutrals, serif headings under a double rule',
+            self::Telex => 'Phosphor green on cold graphite, monospace headings, a bar that stays dark',
+            self::Gutter => 'Ultramarine on pure neutrals, no rounded corners, drawn borders',
+            self::Vellum => 'Iris on violet neutrals, generous radii, glass and light',
         };
     }
 

@@ -2,16 +2,25 @@
 
 namespace Elemind\PressFilamentTheme;
 
+use Closure;
+use Elemind\PressFilamentTheme\Actions\SwitchVariantAction;
+use Elemind\PressFilamentTheme\Concerns\ResolvesVariant;
 use Elemind\PressFilamentTheme\Enums\PressVariant;
+use Filament\Actions\Action;
 use Filament\Contracts\Plugin;
 use Filament\FontProviders\BunnyFontProvider;
 use Filament\Panel;
+use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\HtmlString;
 
 class PressFilamentTheme implements Plugin
 {
+    use ResolvesVariant;
+
     public const PACKAGE = 'elemind/press-filament-theme';
 
     protected PressVariant $variant = PressVariant::Broadsheet;
@@ -25,6 +34,10 @@ class PressFilamentTheme implements Plugin
      */
     protected ?bool $applyTheme = null;
 
+    protected bool $switcherUi = true;
+
+    protected bool | Closure $switcherVisible = true;
+
     public static function make(): static
     {
         return app(static::class);
@@ -36,6 +49,14 @@ class PressFilamentTheme implements Plugin
         $plugin = filament(app(static::class)->getId());
 
         return $plugin;
+    }
+
+    /**
+     * The switcher, for anywhere other than the user menu: a settings page, a header.
+     */
+    public static function variantAction(string $name = 'pressVariant'): Action
+    {
+        return SwitchVariantAction::make(static::get(), $name);
     }
 
     public function getId(): string
@@ -88,6 +109,31 @@ class PressFilamentTheme implements Plugin
         return $this;
     }
 
+    /**
+     * Whether to put the switcher in the user menu. Turn it off to place it
+     * yourself with PressFilamentTheme::variantAction().
+     */
+    public function switcherUi(bool $condition = true): static
+    {
+        $this->switcherUi = $condition;
+
+        return $this;
+    }
+
+    public function switcherVisible(bool | Closure $condition = true): static
+    {
+        $this->switcherVisible = $condition;
+
+        return $this;
+    }
+
+    public function isSwitcherVisible(): bool
+    {
+        return (bool) (is_callable($this->switcherVisible)
+            ? ($this->switcherVisible)()
+            : $this->switcherVisible);
+    }
+
     public function getVariant(): PressVariant
     {
         return $this->variant;
@@ -109,6 +155,15 @@ class PressFilamentTheme implements Plugin
                     ),
                     PressVariant::cases(),
                 ),
+                // The presets on their own, for panels that compile their own theme.
+                // loadedOnRequest keeps them out of head until a render hook asks.
+                ...array_map(
+                    fn (PressVariant $variant): Css => Css::make(
+                        $variant->getPresetId(),
+                        __DIR__ . '/../resources/css/presets/' . $variant->value . '.css',
+                    )->loadedOnRequest(),
+                    PressVariant::cases(),
+                ),
                 Js::make('press-rail', __DIR__ . '/../resources/js/rail.js'),
             ],
             package: static::PACKAGE,
@@ -118,23 +173,96 @@ class PressFilamentTheme implements Plugin
             $panel->topNavigation();
         }
 
-        $panel->font($this->variant->getSansFont(), provider: BunnyFontProvider::class);
-        $panel->monoFont($this->variant->getMonoFont(), provider: BunnyFontProvider::class);
+        $this->registerFonts($panel);
 
-        if (filled($serifFont = $this->variant->getSerifFont())) {
-            $panel->serifFont(
-                $serifFont,
-                url: $this->variant->getSerifFontUrl(),
-                provider: BunnyFontProvider::class,
-            );
+        if ($this->runtimeSwitch && $this->switcherUi) {
+            $panel->userMenuItems([SwitchVariantAction::make($this)]);
+        }
+
+        if ($this->runtimeSwitch) {
+            $this->registerPresetOverride($panel);
         }
     }
 
     public function boot(Panel $panel): void
     {
-        if ($this->shouldApplyTheme($panel)) {
-            $panel->theme($this->variant->getThemeId());
+        if (! $this->shouldApplyTheme($panel)) {
+            return;
         }
+
+        $panel->theme(
+            $this->runtimeSwitch
+                ? Theme::make('press-runtime')->html(fn (): string => $this->getThemeLinkHtml())
+                : $this->variant->getThemeId()
+        );
+    }
+
+    /**
+     * Theme::html() is resolved through value() when the layout renders, which is
+     * the only moment the panel can see the request. Panel::theme() itself takes no
+     * Closure, so the Theme object carries it instead.
+     */
+    protected function getThemeLinkHtml(): string
+    {
+        $href = FilamentAsset::getTheme($this->resolveVariant()->getThemeId())?->getHref();
+
+        return '<link rel="stylesheet" href="' . e($href ?? '') . '" data-navigate-track />';
+    }
+
+    /**
+     * When the app compiles its own theme, its stylesheet already carries one preset.
+     * STYLES_AFTER lands after it, so the chosen preset wins on document order.
+     *
+     * Registered here rather than in boot(): Panel::boot() hands its render hooks to
+     * FilamentView before it boots its plugins, so a hook added later never arrives.
+     * Whether to emit anything is decided inside the closure, at render time, when
+     * viteTheme() has been set.
+     */
+    protected function registerPresetOverride(Panel $panel): void
+    {
+        $panel->renderHook(
+            PanelsRenderHook::STYLES_AFTER,
+            function () use ($panel): HtmlString {
+                if ($this->shouldApplyTheme($panel)) {
+                    return new HtmlString('');
+                }
+
+                $href = FilamentAsset::getStyleHref(
+                    $this->resolveVariant()->getPresetId(),
+                    static::PACKAGE,
+                );
+
+                return new HtmlString('<link rel="stylesheet" href="' . e($href) . '" data-navigate-track />');
+            },
+        );
+    }
+
+    protected function registerFonts(Panel $panel): void
+    {
+        if (! $this->runtimeSwitch) {
+            $panel->font($this->variant->getSansFont(), provider: BunnyFontProvider::class);
+            $panel->monoFont($this->variant->getMonoFont(), provider: BunnyFontProvider::class);
+
+            if (filled($serifFont = $this->variant->getSerifFont())) {
+                $panel->serifFont(
+                    $serifFont,
+                    url: $this->variant->getSerifFontUrl(),
+                    provider: BunnyFontProvider::class,
+                );
+            }
+
+            return;
+        }
+
+        // Closures here are evaluated inside <head> on every render, so the fonts
+        // follow whichever edition the request resolved to.
+        $panel->font(fn (): string => $this->resolveVariant()->getSansFont(), provider: BunnyFontProvider::class);
+        $panel->monoFont(fn (): string => $this->resolveVariant()->getMonoFont(), provider: BunnyFontProvider::class);
+        $panel->serifFont(
+            fn (): ?string => $this->resolveVariant()->getSerifFont(),
+            url: fn (): ?string => $this->resolveVariant()->getSerifFontUrl(),
+            provider: BunnyFontProvider::class,
+        );
     }
 
     /**

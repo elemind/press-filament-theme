@@ -112,6 +112,78 @@ not fight. Be aware that `Panel::getTheme()` gives `viteTheme()` precedence unco
 PressFilamentTheme::make()->telex()->applyTheme(false); // never set the packaged theme
 ```
 
+## Letting people choose
+
+Off by default. Turn it on and everyone picks their own edition:
+
+```php
+PressFilamentTheme::make()->broadsheet()->runtimeSwitch();
+```
+
+A "Theme" entry appears in the user menu; picking an edition stores the choice and
+reloads the page. `->variant()` stays the default for anyone who has not chosen yet.
+
+Offer only some of them:
+
+```php
+PressFilamentTheme::make()->runtimeSwitch([PressVariant::Telex, PressVariant::Gutter]);
+```
+
+A stored choice outside that list falls back to the default. If the default itself is
+not in the list, the first offered edition takes its place — otherwise it would be a
+default nobody could return to.
+
+### Where the choice lives
+
+In a cookie, for a year, read on every request — including for guests, so the login
+screen keeps the edition someone last used. To keep it somewhere else, hand over the
+two ends:
+
+```php
+PressFilamentTheme::make()
+    ->runtimeSwitch()
+    ->variantResolver(fn () => auth()->user()?->press_variant)
+    ->variantPersister(fn (PressVariant $variant) => auth()->user()->update([
+        'press_variant' => $variant->value,
+    ]));
+```
+
+The resolver may return a `PressVariant` or its string value. The two are independent:
+reading from the database while still writing a cookie is a legitimate combination. Note
+that a cookie is per browser, not per identity — the same person on two devices gets two
+editions until they choose on each.
+
+### Putting the switcher elsewhere
+
+```php
+PressFilamentTheme::make()->runtimeSwitch()->switcherUi(false);   // not in the user menu
+
+PressFilamentTheme::variantAction()                              // put it where you like
+```
+
+`->switcherVisible(fn () => auth()->user()->isAdmin())` gates the entry; the closure runs
+at render time, so the authenticated user is available.
+
+### With a theme you compile yourself
+
+The switch works in both installation modes, but a panel that compiles its own theme has
+to leave the edition out of it. Import the engine and the rail, and **not** a preset:
+
+```css
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@import '../../press/engine/engine.css';
+@import '../../press/engine/rail.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+```
+
+The plugin then adds the chosen preset after your stylesheet. Leaving a preset compiled in
+does not work: a preset is written to sit on the engine's defaults, not on another preset,
+so any token the compiled one declares and the chosen one does not would survive — you get
+one edition's colours with another's typography.
+
 ## Fonts
 
 Fonts are served from [Bunny Fonts](https://fonts.bunny.net) (GDPR-friendly, no Google

@@ -14,7 +14,7 @@ function pressPanel(PressFilamentTheme $plugin, ?callable $configure = null): Pa
     }
 
     $panel->plugin($plugin);
-    $plugin->boot($panel);
+    $panel->boot();
 
     return $panel;
 }
@@ -96,7 +96,7 @@ it('cannot override a vite theme even when applyTheme is forced on', function ()
         ->viteTheme('resources/css/filament/admin/theme.css')
         ->plugin($plugin);
 
-    $plugin->boot($panel);
+    $panel->boot();
 
     expect($panel->getViteTheme())->toBe('resources/css/filament/admin/theme.css');
 });
