@@ -2,6 +2,15 @@
 
 All notable changes to `press-filament-theme` will be documented in this file.
 
+## v1.0.1 - 2026-09-08
+
+### Fixed
+
+- The installation order in the README. Press registers its stylesheets and its rail script from
+  the plugin, so `php artisan filament:assets` has to run *after* the plugin is registered on a
+  panel — run before, it publishes nothing and reports no error. The three sections that gave the
+  old order now agree.
+
 ## v1.0.0 - 2026-09-08
 
 ### Added
