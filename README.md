@@ -83,7 +83,7 @@ against what is actually behind them, using the WCAG 2.1 formula — not estimat
 
 ## Requirements
 
-| PHP | 8.2+ |
+| PHP | 8.3+ |
 |---|---|
 | **Laravel** | 11.28+, 12 or 13 |
 | **Filament** | 5.x |
