@@ -2,11 +2,12 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "node bin/build.js --dev",
-        "build": "node bin/build.js"
+        "dev": "tailwindcss --input resources/css/index.css --output resources/dist/press-filament-theme.css --watch",
+        "build": "tailwindcss --input resources/css/index.css --output resources/dist/press-filament-theme.css --minify"
     },
     "devDependencies": {
-        "esbuild": "^0.28.0",
-        "prettier": "^3.5.3"
+        "@tailwindcss/cli": "^4.1.18",
+        "prettier": "^3.5.3",
+        "tailwindcss": "^4.1.18"
     }
 }
