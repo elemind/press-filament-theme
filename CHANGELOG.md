@@ -2,6 +2,10 @@
 
 All notable changes to `press-filament-theme` will be documented in this file.
 
+## v1.0.2 - 2026-09-09
+
+**Full Changelog**: https://github.com/elemind/press-filament-theme/compare/v1.0.1...v1.0.2
+
 ## v1.0.1 - 2026-09-08
 
 ### Fixed
