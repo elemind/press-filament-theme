@@ -117,6 +117,16 @@
   --press-rail-search-ring: color-mix(in oklab, oklch(1 0 0) 70%, transparent);
   --press-rail-search-radius: 9999px;
   --press-rail-avatar-ring: color-mix(in oklab, oklch(1 0 0) 80%, transparent);
+
+  /* Declared even though they match the engine's defaults. A preset that stays
+     silent on a token another preset sets does not fall back to the engine: it
+     inherits the other preset's value, because a compiled theme bakes one
+     edition into `:root` and the runtime switch overlays a second one after it.
+     Silence is not a default here, it is a hole. */
+  --press-rail-shadow: 0 0 #0000;
+  --press-rail-item-font: var(--press-font-sans);
+  --press-rail-logo-filter: none;
+  --press-rail-logo-color: var(--press-neutral-950);
 }
 
 /* ----- Dusk ----------------------------------------------------------------
@@ -151,6 +161,11 @@
   --press-rail-search-bg: color-mix(in oklab, oklch(1 0 0) 7%, transparent);
   --press-rail-search-ring: color-mix(in oklab, oklch(1 0 0) 12%, transparent);
   --press-rail-avatar-ring: color-mix(in oklab, oklch(1 0 0) 22%, transparent);
+
+  /* The `:root` above would otherwise beat the engine's own `.dark` rule -- same
+     specificity, and the preset is loaded later -- leaving the wordmark dark on
+     a dark bar. Declaring the light value obliges us to declare this one. */
+  --press-rail-logo-color: oklch(0.97 0 0);
 }
 
 

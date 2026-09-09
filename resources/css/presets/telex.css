@@ -141,6 +141,12 @@
   --press-shadow-overlay: 0 16px 32px -12px oklch(0 0 0 / .7);
 
   --press-rail-bg: var(--press-bg-topbar);
+
+  /* The same value as `:root`, restated on purpose. The bar is dark in both
+     modes, so the wordmark is light in both -- but every other edition declares
+     this token in `.dark`, and an edition that stays silent where the others
+     speak is exactly the hole this class of bug comes out of. */
+  --press-rail-logo-color: oklch(0.94 0.006 250);
 }
 
 

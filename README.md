@@ -322,6 +322,32 @@ between modes — a `:root` declaration in a later stylesheet beats an earlier `
 specificity. And write a switched-off shadow as `0 0 #0000`, never `none`: the theme's shadows are
 composed from several variables, and a `none` in the middle collapses the whole declaration.
 
+### Your logo
+
+Press does not touch `->brandLogo()` or `->darkModeBrandLogo()` — with one exception worth knowing
+before you pick your assets.
+
+**Telex flattens the logo to white.** Its bar is dark in both light and dark mode, so the edition
+applies `filter: brightness(0) invert(1) opacity(.9)` to any image in the brand slot. A coloured
+logo comes out as a white silhouette, in both modes, and the `darkModeBrandLogo` variant is
+flattened to exactly the same white as the light one. That is deliberate: a single wordmark that
+reads on a dark bar beats two that each read on only one. Broadsheet, Gutter and Vellum leave the
+image untouched, so their bars show your colours and the light/dark pair does what Filament
+promises.
+
+To opt out for Telex, unset the filter in a stylesheet loaded after the theme, and supply assets
+that already read on a dark bar:
+
+```css
+:root:root {
+    --press-rail-logo-filter: none;
+}
+```
+
+A brand set as **text** rather than an image — `->brandName()` with no logo — is a different lever:
+text takes `--press-rail-logo-color`, not the filter, because a filter tuned for a silhouette turns
+a wordmark into nonsense on any edition that tints instead of flattening.
+
 ## Reference
 
 **Editions** — `PressVariant::Broadsheet | Telex | Gutter | Vellum`, string values `'broadsheet'`,

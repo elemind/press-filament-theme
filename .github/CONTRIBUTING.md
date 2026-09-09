@@ -48,6 +48,18 @@ If the project maintainer has any additional requirements, you will find them li
   purpose, so that `composer require` alone is enough to install the theme. The Tailwind version is
   pinned exactly for this reason — do not loosen it without rebuilding.
 
+- **An edition never stays silent where another speaks** - A `--press-rail-*` token declared by one
+  edition must be declared by all four, in the same bucket (`:root` or `.dark`). Silence is not a
+  fallback to the engine's default: a compiled theme bakes one edition into `:root` and the runtime
+  switch overlays a second one after it, so the silent edition inherits the declaring edition's
+  value. That is how Telex's white-flattened logo ended up invisible on Broadsheet's pale bar.
+  `tests/PresetTokenParityTest.php` enforces this for the tokens that have already bitten us; the
+  rest of the surface is still open, so check by hand as well.
+
+  The two buckets are separate on purpose. `:root` and `.dark` carry the same specificity, and the
+  preset is loaded after the engine, so declaring a token only in `:root` silently kills the
+  engine's `.dark` value for it — declare both or neither.
+
 - **Add tests!** - Your patch won't be accepted if it doesn't have tests.
 
 - **Document any change in behaviour** - Make sure the `README.md` and any other relevant documentation are kept up-to-date.
