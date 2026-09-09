@@ -12,6 +12,10 @@ colours, but four publications — type, shape, navigation and colour move toget
 
 ![Press](art/press-hero.png)
 
+**[See it running →](https://press-filament-theme-demo.elemind.com)** — the Filament demo panel in
+all four editions, light and dark, switched from the user menu. The sign-in form is prefilled;
+press the button.
+
 ## Why a rail
 
 A vertical sidebar spends a fifth of every screen restating where you are. On a table with nine
@@ -38,7 +42,8 @@ this theme.
 | **Vellum** | Iris on violet neutrals. Figtree, generous radii, glass pills and a three-radial wash |
 
 Every screen in both modes. Judge the pairs yourself — a theme that only works in one of them is
-half a theme.
+half a theme. Or [skip the pictures](https://press-filament-theme-demo.elemind.com) and switch
+editions yourself.
 
 | Light | Dark |
 |---|---|
