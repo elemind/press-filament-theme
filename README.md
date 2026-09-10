@@ -3,6 +3,7 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/elemind/press-filament-theme.svg?style=flat-square)](https://packagist.org/packages/elemind/press-filament-theme)
 [![Total Downloads](https://img.shields.io/packagist/dt/elemind/press-filament-theme.svg?style=flat-square)](https://packagist.org/packages/elemind/press-filament-theme)
 [![License](https://img.shields.io/packagist/l/elemind/press-filament-theme.svg?style=flat-square)](LICENSE.md)
+[![Live Demo](https://img.shields.io/badge/live_demo-open_now-16a34a.svg?style=flat-square)](https://press-filament-theme-demo.elemind.com)
 
 **The sidebar is a habit, not a requirement.**
 
@@ -10,11 +11,13 @@ Press moves a Filament panel's navigation into a horizontal rail across the top 
 screen back to the work. It ships in four editions that share one engine: not four accent
 colours, but four publications — type, shape, navigation and colour move together.
 
-![Press](art/press-hero.png)
+## Try the live demo
 
-**[See it running →](https://press-filament-theme-demo.elemind.com)** — the Filament demo panel in
-all four editions, light and dark, switched from the user menu. The sign-in form is prefilled;
-press the button.
+**[Open the live demo →](https://press-filament-theme-demo.elemind.com)** — explore all four
+editions in light and dark mode, switch between them from the user menu, and sign in instantly with
+the prefilled form.
+
+[![Open the Press live demo](art/press-hero.png)](https://press-filament-theme-demo.elemind.com)
 
 ## Why a rail
 
